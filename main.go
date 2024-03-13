@@ -4,11 +4,28 @@ import (
 	"context"
 	"net/http"
 	"osuprogressserver/templates"
+	"strconv"
+
+	"github.com/a-h/templ"
 )
 
 func Home(w http.ResponseWriter, req *http.Request) {
-	component := templates.Hello("Hello")
+
+	id := req.PathValue("id")
+
+	c, err := strconv.Atoi(id)
+
+	var component templ.Component
+
+	if err != nil {
+		component = templates.Hello(0)
+
+	} else {
+		Count = c
+		component = templates.Hello(c)
+	}
 	component.Render(context.Background(), w)
+
 }
 
 func Api(w http.ResponseWriter, req *http.Request) {
@@ -31,7 +48,7 @@ func main() {
 
 	r := http.NewServeMux()
 
-	r.HandleFunc("GET /", Home)
+	r.HandleFunc("GET /{id...}", Home)
 
 	r.HandleFunc("POST /api/count", Api)
 

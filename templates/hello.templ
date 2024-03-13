@@ -1,9 +1,10 @@
 package templates
 
 import "strconv"
-templ Hello(name string) {
+
+templ Hello(init int) {
     @Index() {
-        @Api(0)
+        @Api(init)
         @Reset()
     }
 }
@@ -39,6 +40,11 @@ templ Footer(){
     <footer>
     <p>Bye bye</p>
     </footer>
+}
+
+templ Error(err string){
+    <p>Error occured: { err }</p>
+    <p>Go back <a href="/">Home</a></p>
 }
 
 templ Index(){
