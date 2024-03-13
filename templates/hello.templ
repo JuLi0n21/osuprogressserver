@@ -1,0 +1,49 @@
+package templates
+
+import "strconv"
+templ Hello(name string) {
+    @Index() {
+        @Api(0)
+        @Reset()
+    }
+}
+
+templ Reset(){
+     <button
+     hx-DELETE="/api/count"
+     hx-trigger="click"
+     hx-target="#counter"
+     hx-swap="outerHTML">Reset</button>
+}
+
+templ Api(count int) {
+     <button id="counter" 
+     hx-POST="/api/count"
+     hx-trigger="click"
+     hx-swap="outerHTML">{ strconv.Itoa( count) }</button>
+}
+
+templ Head(){
+    <head>
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    </head>
+}
+
+templ Header(){
+    <header>
+    <p>Counter Example Htmx</p>
+    </header>
+}
+
+templ Footer(){
+    <footer>
+    <p>Bye bye</p>
+    </footer>
+}
+
+templ Index(){
+    @Head()
+    @Header()
+    { children... }
+    @Footer()
+}
