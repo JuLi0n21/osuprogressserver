@@ -2,11 +2,13 @@ package templates
 
 import "strconv"
 
-templ Hello(init int) {
-    @Index() {
-        @Api(init)
+func d(i int) string {
+  return strconv.Itoa(i)
+}
+
+templ Home(i int) {
+        @Api(i)
         @Reset()
-    }
 }
 
 templ Reset(){
@@ -14,31 +16,37 @@ templ Reset(){
      hx-DELETE="/api/count"
      hx-trigger="click"
      hx-target="#counter"
-     hx-swap="outerHTML">Reset</button>
+     hx-swap="outerHTML"
+     class="px-4 py-2 bg-blue-500 text-white rounded-md mr-4">Reset</button>
 }
 
 templ Api(count int) {
      <button id="counter" 
      hx-POST="/api/count"
      hx-trigger="click"
-     hx-swap="outerHTML">{ strconv.Itoa( count) }</button>
+     hx-swap="outerHTML"
+     class="px-4 py-2 bg-blue-500 text-white rounded-md mr-4">{ d(count) }</button>
 }
 
 templ Head(){
     <head>
+    <meta charset="UTF-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
     </head>
 }
 
 templ Header(){
     <header>
-    <p>Counter Example Htmx</p>
+    <p>Small Website Example Htmx</p>
     </header>
 }
 
 templ Footer(){
-    <footer>
-    <p>Bye bye</p>
+    <footer
+    class="absolute bottom-0">
+    <p>&copy; Julian</p>
     </footer>
 }
 
@@ -47,9 +55,75 @@ templ Error(err string){
     <p>Go back <a href="/">Home</a></p>
 }
 
+templ About(){
+    <p>This Page was made by me</p>
+} 
+
+templ Contact(){
+ <div class="container mx-auto mt-8 flex flex-wrap">
+        <!-- Contact Info and Images (Left Side) -->
+        <div class="w-full md:w-1/2 px-4 mb-8 md:mb-0">
+            <h1 class="text-2xl font-bold mb-4">Contact Us</h1>
+            <p class="mb-4">Feel free to reach out to us at the following address:</p>
+            <p class="mb-4">1234 Elm Street, Springfield, USA</p> <!-- Fake address -->
+            <!-- Images --> 
+            <img src="https://picsum.photos/800" alt="Image 1" class="w-full"></img>
+        </div>
+
+        <!-- Google Maps (Right Side) -->
+        <div class="w-full md:w-1/2 px-4">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3236.249388789447!2d-77.0445669846098!3d38.899096979566134!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89b7b7bcdecbb1df%3A0xa647a205ee368972!2sWashington%20Monument!5e0!3m2!1sen!2sus!4v1636988144724!5m2!1sen!2sus" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <div class="flex justify-between">
+                <img src="https://picsum.photos/700" class="w-1/2 p-4"></img>
+                <img src="https://picsum.photos/600" class="w-1/2 p-4"></img>
+            </div>
+        </div>
+    </div>
+}
+
+templ Navigation(){
+<nav 
+    hx-target="#main"
+    class="bg-white shadow px-4 py-6">
+    
+    <ul class="flex space-x-4">
+    <li><a href="#" 
+            hx-get="/" 
+            hx-trigger="click"
+            class="text-gray-800 hover:text-gray-900">
+    Home</a></li>
+
+    <li><a href="#" 
+            hx-get="/about" 
+            hx-trigger="click"
+            class="text-gray-800 hover:text-gray-900">
+    About</a></li>
+
+    <li><a href="#" 
+            hx-get="/contact" 
+            hx-trigger="click"
+            class="text-gray-800 hover:text-gray-900">
+    Contact</a></li>
+  </ul>
+</nav>
+}
+
 templ Index(){
     @Head()
-    @Header()
-    { children... }
-    @Footer()
+    <body
+    class="bg-gray-800 text-white relative">
+        @Header()
+        @Navigation()
+            <div id="main"
+            class="pb-10">
+            { children... }
+            </div>
+        @Footer()
+    </body>
+}
+
+templ Layout(content templ.Component ){
+    @Index(){
+        @content
+    }
 }

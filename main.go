@@ -4,27 +4,22 @@ import (
 	"context"
 	"net/http"
 	"osuprogressserver/templates"
-	"strconv"
-
-	"github.com/a-h/templ"
 )
 
 func Home(w http.ResponseWriter, req *http.Request) {
 
-	id := req.PathValue("id")
+	headers := req.Header
 
-	c, err := strconv.Atoi(id)
+	component := templates.Home(Count)
 
-	var component templ.Component
-
-	if err != nil {
-		component = templates.Hello(0)
-
+	if ok := headers[http.CanonicalHeaderKey("Hx-request")]; len(ok) > 0 {
+		w.Header().Add("HX-Push-Url", "/")
+		w.Header().Add("HX-Replace-Url", "/")
+		component.Render(context.Background(), w)
 	} else {
-		Count = c
-		component = templates.Hello(c)
+		layout := templates.Layout(component)
+		layout.Render(context.Background(), w)
 	}
-	component.Render(context.Background(), w)
 
 }
 
@@ -42,13 +37,49 @@ func Reset(w http.ResponseWriter, req *http.Request) {
 	component.Render(context.Background(), w)
 }
 
+func About(w http.ResponseWriter, req *http.Request) {
+
+	headers := req.Header
+
+	component := templates.About()
+
+	if ok := headers[http.CanonicalHeaderKey("Hx-request")]; len(ok) > 0 {
+
+		w.Header().Set("HX-Push-Url", "/about")
+		w.Header().Set("HX-Replace-Url", "/about")
+		component.Render(context.Background(), w)
+	} else {
+		layout := templates.Layout(component)
+		layout.Render(context.Background(), w)
+	}
+}
+
+func Contact(w http.ResponseWriter, req *http.Request) {
+
+	headers := req.Header
+
+	component := templates.Contact()
+
+	if ok := headers[http.CanonicalHeaderKey("Hx-request")]; len(ok) > 0 {
+		//w.Header().Set("HX-Push-Url", "/contact")
+		//w.Header().Set("HX-Replace-Url", "/contact")
+		component.Render(context.Background(), w)
+	} else {
+		layout := templates.Layout(component)
+		layout.Render(context.Background(), w)
+	}
+
+}
+
 var Count = 0
 
 func main() {
 
 	r := http.NewServeMux()
 
-	r.HandleFunc("GET /{id...}", Home)
+	r.HandleFunc("GET /", Home)
+	r.HandleFunc("GET /about", About)
+	r.HandleFunc("GET /contact", Contact)
 
 	r.HandleFunc("POST /api/count", Api)
 
