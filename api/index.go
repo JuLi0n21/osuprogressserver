@@ -9,6 +9,7 @@ import (
 
 func (s *Server) Index(w http.ResponseWriter, r *http.Request) {
 	//todo
+
 	component := views.Index()
 
 	component.Render(context.Background(), w)
