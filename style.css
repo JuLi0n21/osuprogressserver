@@ -544,7 +544,20 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
-.bg-gray-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.content {
+  max-width: 1000px;
+  min-width: 1000px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }

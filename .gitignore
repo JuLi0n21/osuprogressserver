@@ -7,3 +7,5 @@ tmp/
 *.db
 *.exe
 osuprogressserver
+node_modules/
+style.css

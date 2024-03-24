@@ -1,11 +1,17 @@
 package views
 
 import "osuprogressserver/components"
+import "osuprogressserver/types"
 
-templ Index() {
+templ Index(player types.User) {
     @Head()
-    <body class="bg-gray-400">
+    <body class="bg-menu-medium flex justify-center">
         @components.FixedIcons()
+        <div class="content bg-menu-mediumdark ">
+            <h1 class="flex justify-center">Osu Progress</h1>
+            @components.Header(player)
+            @components.ScoreSearch()
+        </div>
     </body>
     
 }
@@ -14,8 +20,7 @@ templ Head(){
     <head>
     <meta charset="UTF-8"></meta>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
-    <script src="style.css"></script>
+    <link rel="stylesheet" href="./style.css"></link>
     </head>
 }

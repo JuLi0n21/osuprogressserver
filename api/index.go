@@ -2,16 +2,17 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"net/http"
+	"osuprogressserver/types"
 	"osuprogressserver/views"
 )
 
 func (s *Server) Index(w http.ResponseWriter, r *http.Request) {
 	//todo
-
-	component := views.Index()
+	player := types.User{
+		Username: "JuLi0n_",
+	}
+	component := views.Index(player)
 
 	component.Render(context.Background(), w)
-	fmt.Fprintf(w, "Hello world")
 }

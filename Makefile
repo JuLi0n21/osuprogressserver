@@ -1,5 +1,8 @@
 build:
-	@./tailwind.exe -o style.css --watch & templ generate -watch & air
+	@air & templ generate -watch
+
+style:
+	@npx tailwindcss -i input.css -o style.css --watch
 
 run:
 	@go build .
