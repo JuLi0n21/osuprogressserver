@@ -1,3 +1,8 @@
-templates/*.go
-templates/*.txt
+views/**/*.go
+views/**/*.txt
+components/**/*.go
+components/**/*.txt
 tmp/
+.vscode/
+*.db
+*.exe
