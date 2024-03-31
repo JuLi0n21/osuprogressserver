@@ -3,11 +3,11 @@ package views
 import "osuprogressserver/types"
 import "osuprogressserver/cmp"
 
-templ Index(player types.User, stats types.Stats, scores []types.ScoreData) {
+templ Index(player types.User, stats types.Stats, scores []types.Ext_ScoreData) {
     @Head()
     <body class="backdrop--dark flex justify-center text-white">
         @cmp.FixedIcons()
-        <div class="content backdrop--medium--dark rounded-lg">
+        <div class="h-max content backdrop--medium--dark rounded-lg ">
             <h1 class="flex justify-center">Osu Progress</h1>
             @cmp.Header(player, stats)
             @cmp.Spacer()

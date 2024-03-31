@@ -2,7 +2,7 @@ package cmp
 
 import "osuprogressserver/types"
 
-templ ScoreSearch(scores []types.ScoreData){
+templ ScoreSearch(scores []types.Ext_ScoreData){
     for _, score := range scores {
         @ScoreSearchItem(score)
     }

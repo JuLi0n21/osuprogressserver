@@ -1,7 +1,7 @@
-views/**/*.go
-views/**/*.txt
-cmp/**/*.go
-cmp/**/*.txt
+views/**/*_templ.go
+views/**/*_templ.txt
+cmp/**/*_templ.go
+cmp/**/*_templ.txt
 tmp/
 .vscode/
 *.db
