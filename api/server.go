@@ -1,8 +1,9 @@
 package api
 
 import (
-	"net/http"
 	"osuprogressserver/storage"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type Server struct {
@@ -18,17 +19,10 @@ func NewServer(port string, store storage.Storage) *Server {
 }
 
 func (s *Server) Start() error {
-	http.HandleFunc("GET /", s.Index)
-	http.HandleFunc("GET /style.css", s.style)
-	http.HandleFunc("GET /favicon.ico", s.icon)
+	app := fiber.New()
 
-	return http.ListenAndServe(s.port, nil)
-}
+	app.Static("assets", "./static")
+	app.Get("/", s.Index)
 
-func (s *Server) style(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./style.css")
-}
-
-func (s *Server) icon(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./favicon.ico")
+	return app.Listen(s.port)
 }

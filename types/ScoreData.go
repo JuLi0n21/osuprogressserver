@@ -1,6 +1,7 @@
 package types
 
 type ScoreData struct {
+	ScoreId      string
 	Title        string
 	Version      string
 	Date         string

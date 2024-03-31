@@ -2,7 +2,7 @@ build:
 	@air & templ generate -watch
 
 style:
-	@npx tailwindcss -i input.css -o style.css --watch
+	@npx tailwindcss -i ./static/input.css -o ./static/style.css --watch
 
 run:
 	@go build .

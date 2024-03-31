@@ -24,7 +24,7 @@ var files = []helper{
 	//additional files
 }
 
-func File(name string) string {
+func Img(name string) string {
 	for _, file := range files {
 		if file.Name == name {
 			return file.Link

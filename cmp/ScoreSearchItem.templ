@@ -1,0 +1,64 @@
+package cmp
+
+import "osuprogressserver/types"
+
+templ ScoreSearchItem(score types.ScoreData){
+    <a class="flex justify-center mb-0" href="/score?id=7738" rel="noopener noreferrer">
+	<div class="flex backdrop--light hover:bg-pink-900 h-16 rounded justify-between m-4 w-5/6 mb-1 mt-1">
+		<div class="flex flex-col max-w-[100px] rounded justify-evenly w-1/6">
+			<div class="flex justify-center">
+				<p class="text--gray">ranked</p>
+			</div>
+			<div class="flex justify-center">
+				<img src="A.png" alt="A" class="w-20" loading="lazy"></img>
+            </div>
+		</div>
+		<div class="backdrop--dark icon rounded-lg flex-nowrap">
+			<img src="https://assets.ppy.sh/beatmaps/1208907/covers/list@2x.jpg?1629681318" class="w-16 h-16" alt="?" loading="lazy"></img>
+        </div>
+
+		<div class="flex flex-col rounded justify-evenly w-full max-w-[400px]">
+			<div>
+				<p class="text-white whitespace-nowrap overflow-hidden">VANESSA by Suzaku</p>
+			</div>
+			<div class="flex justify-between">
+				<p class="text-white whitespace-nowrap overflow-hidden">180389 / 90 (250) </p>   
+					
+						<div class="flex">
+						  
+							   <img class="align-end" src="DoubleTime.png" style="height: 25px"></img>
+						  
+						</div>
+					 
+			</div>
+			<div class="flex">
+				<p class="text--dark--yellow whitespace-nowrap overflow-hidden">Normal</p>
+				<p class="text--gray ml-4 whitespace-nowrap overflow-hidden">2024-03-26 22:07:21Z (Pass)</p>
+			</div>
+		</div>
+
+		<div class="flex max-w-[120px]">
+			<div class="flex flex-col justify-evenly justify-self-end rounded w-1/4 ml-3">
+				<div>
+					<p class="text--yellow">93.48%</p>
+				</div>
+				<div class="flex text-nowrap whitespace-nowrap">
+					<span class="text-blue-500 ">122
+					<span class="text-green-500 ">7
+					<span class="text--orange ">0
+					<span class="text-red-600 ">4
+				</span></span></span></span></div>
+			</div>
+		</div>
+
+		<div class="flex flex-col justify-evenly rounded backdrop--medium--light w-1/6 max-w-[100px]">
+			<div class="flex justify-center">
+				<p class="text--pink">6.29pp</p>
+			</div>
+			<div class="flex justify-center">
+				<p class="text--pink--dark justify-self-center">(23.06pp)</p>
+			</div>
+		</div>
+	</div>
+</a>
+}

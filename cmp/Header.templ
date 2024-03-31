@@ -1,0 +1,27 @@
+package cmp
+
+import "osuprogressserver/types"
+
+templ Header(player types.User, stats types.Stats) {
+<div>
+    <div style="background-size: cover; background-position: center center;background-image: url(&quot; https://assets.ppy.sh/user-profile-covers/14100399/cd1600936d7a56115cd147f47169addcf8f812133861b667c7dd3d177ca5068d.jpeg &quot;); height: 250px">
+    </div> 
+        <a href={ templ.SafeURL("https://osu.ppy.sh/users/"+ i(player.UserId))  } class="left-12 inline-block rounded -top-12 relative max-h-0 h-0  hover:scale-105" target="_blank" rel="noopener noreferrer">
+            <img src="https://a.ppy.sh/14100399?1672009368.jpeg" style="width:100px;" class=""></img>
+        </a>
+    <div class="flex justify-around">
+        <div class="text-left pt-3 pb-3">
+            <p class="">{ player.Username }</p>
+            <p class="">#{ player.GlobalRank } (#{ player.LocalRank })</p>
+            <p class=""><span class={"fi fi-"+player.Countrycode }></span>{ player.Country }</p>
+        </div>
+        <div class="text-left pt-3 pb-3">
+            <p class="">
+                ⏰ { stats.Time } [{ stats.Status}]
+            </p>
+            <p class="">💻 { stats.Screen }</p>
+            <p class="">📂 { i(stats.Count) }</p>
+        </div>
+    </div>
+    </div>
+}

@@ -1,0 +1,9 @@
+package cmp
+
+import "osuprogressserver/types"
+
+templ ScoreSearch(scores []types.ScoreData){
+    for _, score := range scores {
+        @ScoreSearchItem(score)
+    }
+}

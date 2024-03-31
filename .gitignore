@@ -1,7 +1,7 @@
 views/**/*.go
 views/**/*.txt
-components/**/*.go
-components/**/*.txt
+cmp/**/*.go
+cmp/**/*.txt
 tmp/
 .vscode/
 *.db
