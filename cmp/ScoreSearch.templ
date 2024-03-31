@@ -3,6 +3,16 @@ package cmp
 import "osuprogressserver/types"
 
 templ ScoreSearch(scores []types.Ext_ScoreData){
+   <div class="text-center"> 
+    <h1>Scores</h1>
+    <div class="flex rounded-lg text--yellow justify-around">
+        <button class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="button" >Fcable</button>
+        <button class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="button" >Recent</button>
+        <input class="w-1/2 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="text" placeholder="Type to Search..."></input>
+        <input class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="Date"></input>
+        <input class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="Date"></input>
+    </div>
+    </div>
     for _, score := range scores {
         @ScoreSearchItem(score)
     }
