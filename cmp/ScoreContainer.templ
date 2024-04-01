@@ -1,0 +1,25 @@
+package cmp
+
+import "osuprogressserver/types"
+
+templ ScoreContainer(scores []types.Ext_ScoreData, offset int, limit int) {
+    <div id="scorecontainer">
+    for _, score := range scores {
+        @ScoreSearchItem(score)
+    }
+    </div>
+    if len(scores) <= limit || len(scores) > 0 {
+        <div class="flex justify-center">
+            <div hx-get="/api/scoresearch"
+            hx-trigger="click"
+            hx-target="#scorecontainer"
+            hx-swap="afterend transition:true"
+            hx-include="#from, #to, #query, #limit, #offset"
+            class="p-5 backdrop--medium--light rounded-md hover:bg-pink-900 text-center cursor-pointer rounded-lg w-5/6 select-none">
+                Load More... 
+            </div>
+                <input id="limit" name="limit" type="hidden" value={i(limit)}></input>
+                <input id="offset" name="offset" type="hidden" value={i(offset)}></input>
+        </div> 
+    } 
+}

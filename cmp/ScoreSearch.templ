@@ -2,18 +2,21 @@ package cmp
 
 import "osuprogressserver/types"
 
-templ ScoreSearch(scores []types.Ext_ScoreData){
-   <div class="text-center"> 
+templ ScoreSearch(scores []types.Ext_ScoreData, limit int, offset int){
+   <form class="text-center mt-4 mb-4"
+   hx-get="/api/scoresearch"
+   hx-trigger="input delay:500ms"
+   hx-target="#scorecontainer"
+   hx-swap="innerHTML transition:true"
+   onkeydown="if (event.key === 'Enter') event.preventDefault();"> 
     <h1>Scores</h1>
-    <div class="flex rounded-lg text--yellow justify-around">
-        <button class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="button" >Fcable</button>
-        <button class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="button" >Recent</button>
-        <input class="w-1/2 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="text" placeholder="Type to Search..."></input>
-        <input class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="Date"></input>
-        <input class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="Date"></input>
-    </div>
-    </div>
-    for _, score := range scores {
-        @ScoreSearchItem(score)
-    }
+        <div class="flex rounded-lg text--yellow justify-around">
+            <button class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="button" >Fcable</button>
+            <button class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="button" >Recent</button>
+            <input id="query" name="query" class="w-1/2 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="text" placeholder="Type to Search..."></input>
+            <input id="from" name="from" class="w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="Date"></input>
+            <input id="to" name="to" class="w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="Date"></input>
+        </div>
+    </form>
+    @ScoreContainer(scores, offset, limit)
 }

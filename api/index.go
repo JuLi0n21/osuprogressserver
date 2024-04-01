@@ -32,11 +32,12 @@ func (s *Server) Index(c *fiber.Ctx) error {
 	score := []types.Ext_ScoreData{
 		{
 			ScoreData: types.ScoreData{
-				Title:        "Example Title",
-				Version:      "v1.2.3",
+				ScoreId:      "3432",
+				Title:        "VANESSA",
+				Version:      "Normal",
 				Date:         "2024-03-31",
 				BeatmapSetId: 123456,
-				Playtype:     "Standard",
+				Playtype:     "Ranked",
 				Ar:           9.5,
 				Cs:           4.0,
 				Hp:           7.0,
@@ -54,7 +55,7 @@ func (s *Server) Index(c *fiber.Ctx) error {
 				Ur:           200.0,
 				HitMiss:      5,
 				Mode:         0,
-				Mods:         0,
+				Mods:         "dt,hd,hr",
 				Time:         240,
 				PP:           345.5,
 				AIM:          150.0,
@@ -65,11 +66,12 @@ func (s *Server) Index(c *fiber.Ctx) error {
 			},
 			BeatmapSet: types.BeatmapSet{
 				BeatmapSetId: 342314,
-				Artist:       "max mut",
+				Artist:       "Suzaku",
 				Tags:         "st, stsl , stsrr, st",
-				CoverList:    "example.png",
-				Cover:        "example.png3",
+				Cover:        "https://assets.ppy.sh/beatmaps/1208907/covers/cover@2x.jpg?1629681318",
+				CoverList:    "https://assets.ppy.sh/beatmaps/1208907/covers/list@2x.jpg?1629681318",
 				Preview:      "soundcloudlink",
+				Rankedstatus: "Ranked",
 			},
 		},
 	}

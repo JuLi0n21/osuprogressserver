@@ -7,4 +7,5 @@ type BeatmapSet struct {
 	CoverList    string
 	Cover        string
 	Preview      string
+	Rankedstatus string
 }

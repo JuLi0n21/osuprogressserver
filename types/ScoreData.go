@@ -24,7 +24,7 @@ type ScoreData struct {
 	Ur           float64
 	HitMiss      int
 	Mode         int
-	Mods         int
+	Mods         string
 	Time         int
 	PP           float64
 	AIM          float64

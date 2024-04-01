@@ -1,23 +1,47 @@
 package api
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"fmt"
+	"math/rand"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 var userSessions = map[string]string{}
 
-func sessionChecker(c *fiber.Ctx) error {
+func SessionChecker(c *fiber.Ctx) error {
 
 	if c.Path() == "/" {
-		c.Next()
-		return nil
+		return c.Next()
 	}
 
 	sessionID := c.Cookies("session")
 	userid, ok := userSessions[sessionID]
+
 	if !ok {
-		c.Redirect("/", fiber.StatusFound)
+		userID := generateUserID()
+
+		userSessions[sessionID] = userID
+		fmt.Println(userID)
+		c.Cookie(&fiber.Cookie{
+			Name:  "session",
+			Value: userID,
+		})
 	}
 
 	c.Locals("userid", userid)
-	c.Next()
-	return nil
+	return c.Next()
+}
+
+func generateUserID() string {
+	return "user_" + randString(64)
+}
+
+func randString(length int) string {
+	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = chars[rand.Intn(len(chars))]
+	}
+	return string(b)
 }
