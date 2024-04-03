@@ -18,5 +18,5 @@ templ ScoreSearch(scores []types.Ext_ScoreData, limit int, offset int){
             <input id="to" name="to" class="w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="Date"></input>
         </div>
     </form>
-    @ScoreContainer(scores, offset, limit)
+    @ScoreContainer(scores, limit, offset)
 }

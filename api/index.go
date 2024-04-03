@@ -44,7 +44,7 @@ func (s *Server) Index(c *fiber.Ctx) error {
 				Od:           8.0,
 				SR:           4.25,
 				Bpm:          180.0,
-				Userid:       98765,
+				Userid:       14100399,
 				ACC:          98.5,
 				Score:        950000,
 				Combo:        1500,
@@ -65,7 +65,7 @@ func (s *Server) Index(c *fiber.Ctx) error {
 				FCPP:         400.5,
 			},
 			BeatmapSet: types.BeatmapSet{
-				BeatmapSetId: 342314,
+				BeatmapSetId: 123456,
 				Artist:       "Suzaku",
 				Tags:         "st, stsl , stsrr, st",
 				Cover:        "https://assets.ppy.sh/beatmaps/1208907/covers/cover@2x.jpg?1629681318",
@@ -75,6 +75,10 @@ func (s *Server) Index(c *fiber.Ctx) error {
 			},
 		},
 	}
+
+	s.store.SaveScore(score[len(score)-1].ScoreData)
+
+	s.store.SaveBeatmapSet(score[len(score)-1].BeatmapSet)
 
 	component := views.Index(player, stats, score)
 
