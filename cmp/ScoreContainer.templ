@@ -21,6 +21,19 @@ templ ScoreContainer(scores []types.Ext_ScoreData, limit int, offset int) {
             </div>
               
         </div> 
-    }   
+    } else {
+        <div>
+            <div class="flex justify-center mb-0">
+                <div class="flex backdrop--light h-16 rounded justify-between m-4 w-5/6 mb-1 mt-1">
+                    <div class="flex-1"></div>
+                        <img src="assets/img/not-found.gif" class="rounded-lg w-16 h-16" alt="?"></img>
+                        <p class="flex-1 text-white text-center ">No Scores found.</p>
+                        <img src="assets/img/not-found.gif" class=" rounded-lg  w-16 h-16" alt="?"></img>
+
+                    <div class="flex-1"></div>
+                </div>
+            </div>
+        </div>
+    }
     </div>
 }

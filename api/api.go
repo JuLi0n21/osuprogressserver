@@ -26,15 +26,17 @@ func (s *Server) ScoreSearch(c *fiber.Ctx) error {
 		return err
 	}
 
+	limit := c.QueryInt("limit", 10)
+	offset := c.QueryInt("offset", 0)
 	var scores []types.Ext_ScoreData
 
-	scores, err := s.store.GetExtScore(q.Query, 14100399, q.Limit, q.Offset)
+	scores, err := s.store.GetExtScore(q.Query, 14100399, limit, offset)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
 	}
 
-	component := cmp.ScoreContainer(scores, q.Limit, q.Offset+len(scores))
+	component := cmp.ScoreContainer(scores, limit, offset+len(scores))
 
 	handler := adaptor.HTTPHandler(templ.Handler(component))
 
