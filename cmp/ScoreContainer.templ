@@ -8,7 +8,7 @@ templ ScoreContainer(scores []types.Ext_ScoreData, offset int, limit int) {
         @ScoreSearchItem(score)
     }
     </div>
-    if len(scores) <= limit || len(scores) > 0 {
+    if len(scores) <= limit && len(scores) > 0 {
         <div class="flex justify-center">
             <div hx-get="/api/scoresearch"
             hx-trigger="click"

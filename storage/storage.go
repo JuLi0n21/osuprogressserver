@@ -7,11 +7,19 @@ type Storage interface {
 	GetScore(int, int, int) ([]types.ScoreData, error)
 
 	//userid, includes beatmapset info
-	GetExtScore(int, int, int) ([]types.Ext_ScoreData, error)
+	GetExtScore(string, int, int, int) ([]types.Ext_ScoreData, error)
 
 	//Start, Endtime
 	GetBanchoTime(string, string) ([]types.BanchoTime, error)
 
 	//Start, Endtime
 	GetScreenTime(string, string) ([]types.ScreenTime, error)
+
+	SaveScore(types.ScoreData) error
+
+	SaveBeatmapSet(types.BeatmapSet) error
+
+	SaveBanchoTime(types.BanchoTime) error
+
+	SaveScreenTime(types.ScreenTime) error
 }

@@ -27,6 +27,10 @@ func (s *Server) Start() error {
 		return c.Next()
 	})
 
+	api := app.Group("/api")
+
+	api.Get("/scoresearch/*", s.ScoreSearch)
+
 	app.Static("assets", "./static")
 	app.Get("/", s.Index)
 	app.Get("/score/:id?", s.ScorePage)

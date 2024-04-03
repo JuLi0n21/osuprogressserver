@@ -2,6 +2,7 @@ package storage
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"osuprogressserver/types"
 
@@ -47,38 +48,7 @@ func (s *SQLite) GetScore(userid int, limit int, offset int) ([]types.ScoreData,
 
 	for rows.Next() {
 		var score types.ScoreData
-		err := rows.Scan(
-			&score.Title,
-			&score.Version,
-			&score.Date,
-			&score.BeatmapSetId,
-			&score.Playtype,
-			&score.Ar,
-			&score.Cs,
-			&score.Hp,
-			&score.Od,
-			&score.SR,
-			&score.Bpm,
-			&score.Userid,
-			&score.ACC,
-			&score.Score,
-			&score.Combo,
-			&score.Maxcombo,
-			&score.Hit50,
-			&score.Hit100,
-			&score.Hit300,
-			&score.Ur,
-			&score.HitMiss,
-			&score.Mode,
-			&score.Mods,
-			&score.Time,
-			&score.PP,
-			&score.AIM,
-			&score.SPEED,
-			&score.ACCURACYATT,
-			&score.Grade,
-			&score.FCPP,
-		)
+		err := rows.Scan(&score)
 		if err != nil {
 			return nil, err
 		}
@@ -91,9 +61,49 @@ func (s *SQLite) GetScore(userid int, limit int, offset int) ([]types.ScoreData,
 	return scores, nil
 }
 
-func (s *SQLite) GetExtScore(userid int, limit int, offset int) ([]types.Ext_ScoreData, error) {
+func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([]types.Ext_ScoreData, error) {
 
-	return []types.Ext_ScoreData{}, nil
+	if limit > 100 {
+		limit = 100
+	}
+
+	stmt, err := s.DB.Prepare(`SELECT * FROM ScoreData
+	INNER JOIN Beatmapset on BeatmapSet.BeatmapSetId = Scoredata.BeatmapSetID
+	WHERE Userid = ? 
+	AND (Title LIKE ? OR Version LIKE ?)
+	ORDER BY Date
+	LIMIT ? 
+	OFFSET ?`)
+	if err != nil {
+		fmt.Println(err.Error())
+		return []types.Ext_ScoreData{}, nil
+	}
+
+	var scores []types.Ext_ScoreData
+
+	rows, err := stmt.Query(userid, query, query, offset, limit)
+	if err != nil {
+		fmt.Println(err.Error())
+		return scores, nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var score types.Ext_ScoreData
+		if err := rows.Scan(&score); err != nil {
+
+			fmt.Println(err.Error())
+			return scores, nil
+		}
+		scores = append(scores, score)
+	}
+
+	if err := rows.Err(); err != nil {
+		fmt.Println(err.Error())
+		return scores, nil
+	}
+
+	return scores, nil
 }
 func (s *SQLite) GetBanchoTime(start string, end string) ([]types.BanchoTime, error) {
 
@@ -103,6 +113,22 @@ func (s *SQLite) GetBanchoTime(start string, end string) ([]types.BanchoTime, er
 func (s *SQLite) GetScreenTime(start string, end string) ([]types.ScreenTime, error) {
 
 	return []types.ScreenTime{}, nil
+}
+
+func (s *SQLite) SaveScore(score types.ScoreData) error {
+	return nil
+}
+
+func (s *SQLite) SaveBeatmapSet(score types.BeatmapSet) error {
+	return nil
+}
+
+func (s *SQLite) SaveBanchoTime(score types.BanchoTime) error {
+	return nil
+}
+
+func (s *SQLite) SaveScreenTime(score types.ScreenTime) error {
+	return nil
 }
 
 func createTables(db *sql.DB) {
@@ -145,6 +171,19 @@ func createTables(db *sql.DB) {
 
 	// Create indexes on Date and Username columns
 	_, err = db.Exec(`CREATE INDEX IF NOT EXISTS idx_username_date ON ScoreData(Userid, Date)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS BeatmapSet (
+		BeatmapSetId INT NOT NULL PRIMARY KEY,
+		Artist       TEXT,
+		Tags         TEXT,
+		CoverList    TEXT,
+		Cover        TEXT,
+		Preview      TEXT,
+		Rankedstatus TEXT
+	)`)
 	if err != nil {
 		log.Fatal(err)
 	}
