@@ -33,7 +33,7 @@ func (s *Server) Start() error {
 
 	app.Static("assets", "./static")
 	app.Get("/", s.Index)
-	app.Get("/score/:id?", s.ScorePage)
+	app.Get("/score/:id", s.ScorePage)
 
 	return app.Listen(s.port)
 }

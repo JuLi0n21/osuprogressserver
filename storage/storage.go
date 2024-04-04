@@ -9,6 +9,9 @@ type Storage interface {
 	//userid, includes beatmapset info
 	GetExtScore(string, int, int, int) ([]types.Ext_ScoreData, error)
 
+	//Scoreid
+	GetExtScoreById(int) ([]types.Ext_ScoreData, error)
+
 	//Start, Endtime
 	GetBanchoTime(string, string) ([]types.BanchoTime, error)
 

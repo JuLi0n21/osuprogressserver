@@ -1,16 +1,64 @@
 package views
 
-templ ScoreSite(){
-   <body>
-    <header>
-        <h1>Welcome to My Website</h1>
-    </header>
-    <div class="container">
-        <p>This is a paragraph of text. You can add your content here.</p>
-        <p>Feel free to modify this template to suit your needs.</p>
-    </div>
-    <footer>
-        <p>&copy; 2024 My Website. All rights reserved.</p>
-    </footer>
-</body>
+import "osuprogressserver/cmp"
+import "osuprogressserver/types"
+import "strings"
+import "strconv"
+
+templ ScoreSite(player types.User, scores []types.Ext_ScoreData){
+   @Head()
+    <body class="backdrop--dark flex justify-center text-white">
+     @cmp.FixedIcons()
+    <div class="content w-1/2 rounded-lg score-backdrop--medium--light text-white">
+        <div id="ScoreData">
+        @header(player, scores[0])
+        @attributes()
+        @progress()
+        @cmp.ScoreSearch(scores, 10, 0)
+        </div>
+        </div>
+    </body>
 }
+
+templ header(player types.User, score types.Ext_ScoreData){
+    <div class="relative">
+     <p class="absolute top-0 left-6">{ score.Rankedstatus }</p>
+        <div class="flex justify-around m-4 text-xl"> 
+            <h2 class="self-center">{ score.Title } ({ score.Version})</h2>
+        </div>
+            <div id="image-container" style="min-height: 280px; min-width: 1000px; position: relative;">
+                <a href={ templ.SafeURL("https://osu.ppy.sh/beatmapsets/" +strconv.Itoa(score.ScoreData.BeatmapSetId)) } target="_blank">
+                    <img src={ score.Cover } style="min-height: 280px; min-width: 1000px; max-height: 280px; object-fit: cover"></img>
+                </a>
+                <img src={ cmp.Img(score.Grade) } alt={ score.Grade} class="absolute w-1/5 top-0 left-0 " loading="lazy"></img>
+            
+
+            <div class="absolute flex top-0 right-0">
+                    for _, mod := range strings.Split(score.Mods, ",") {
+                        <img class="" src={cmp.Img(mod)} alt={mod} style="height: 50px"></img>
+                    }
+            </div>
+            <a href={ templ.SafeURL("https://osu.ppy.sh/users/"+score.Creator)} class="absolute bottom-10 right-0 score-backdrop--dark rounded-lg m-3 p-1 text--pink hover:text-white">
+            { score.Version } by { score.Creator } </a>
+
+            <p class="absolute bottom-0 right-0 score-backdrop--dark rounded-lg m-3 p-1">
+            { player.Username } at { score.Date }</p>
+
+                <button id="playButton" class="absolute left-2 top-52 score-backdrop--dark text--pink hover:text-white">
+                    <i class="fas fa-play"></i>
+                </button>
+                <audio id="audioPlayer">
+                    
+                    <source src="https://b.ppy.sh/preview/1208907.mp3" type="audio/mpeg"></source>
+                    
+                    Your browser does not support the audio element.
+                </audio>
+                <input class="absolute left-0 top-72 cursor-pointer score-backdrop--dark accent-pink-500 text--pink hover:accent-white" type="range" id="volumeSlider" min="0" max="1" value="0.2" step="0.001" oninput="updateVolume()" style="width: 80px;"></input>
+        </div>
+   
+    </div>
+}
+
+templ attributes(){}
+
+templ progress(){}

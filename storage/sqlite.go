@@ -61,28 +61,19 @@ func (s *SQLite) GetScore(userid int, limit int, offset int) ([]types.ScoreData,
 	return scores, nil
 }
 
-func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([]types.Ext_ScoreData, error) {
+func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 
-	if limit > 100 || limit == 0 {
-		limit = 100
-	}
-
-	stmt, err := s.DB.Prepare(`SELECT * FROM ScoreData
+	stmt, err := s.DB.Prepare(`SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
 	LEFT JOIN Beatmapset on BeatmapSet.BeatmapSetId = Scoredata.BeatmapSetID
-	WHERE Userid = ? 
-	AND (Title LIKE ? OR Version LIKE ?)
-	ORDER BY date
-	LIMIT ? 
-	OFFSET ?`)
+	WHERE Scoreid = ? `)
+
 	if err != nil {
 		fmt.Println(err.Error())
 		return []types.Ext_ScoreData{}, nil
 	}
 
 	var scores []types.Ext_ScoreData
-	var q = "%" + query + "%"
-	fmt.Println(q, limit, offset, userid)
-	rows, err := stmt.Query(userid, q, q, limit, offset)
+	rows, err := stmt.Query(id)
 	if err != nil {
 		fmt.Println(err.Error())
 		return scores, nil
@@ -92,6 +83,7 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 	for rows.Next() {
 		var score types.Ext_ScoreData
 		if err := rows.Scan(
+			&score.ScoreId,
 			&score.Title,
 			&score.Version,
 			&score.Date,
@@ -124,6 +116,7 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 			&score.FCPP,
 			&score.BeatmapSet.BeatmapSetId,
 			&score.Artist,
+			&score.Creator,
 			&score.Tags,
 			&score.CoverList,
 			&score.Cover,
@@ -143,6 +136,92 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 
 	return scores, nil
 }
+
+func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([]types.Ext_ScoreData, error) {
+
+	if limit > 100 || limit == 0 {
+		limit = 100
+	}
+
+	stmt, err := s.DB.Prepare(`SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
+	LEFT JOIN Beatmapset on BeatmapSet.BeatmapSetId = Scoredata.BeatmapSetID
+	WHERE Userid = ? 
+	AND (Title LIKE ? OR Version LIKE ?)
+	ORDER BY date
+	LIMIT ? 
+	OFFSET ?`)
+	if err != nil {
+		fmt.Println(err.Error())
+		return []types.Ext_ScoreData{}, nil
+	}
+
+	var scores []types.Ext_ScoreData
+	var q = "%" + query + "%"
+	//fmt.Println(q, limit, offset, userid)
+	rows, err := stmt.Query(userid, q, q, limit, offset)
+	if err != nil {
+		fmt.Println(err.Error())
+		return scores, nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var score types.Ext_ScoreData
+		if err := rows.Scan(
+			&score.ScoreId,
+			&score.Title,
+			&score.Version,
+			&score.Date,
+			&score.ScoreData.BeatmapSetId,
+			&score.Playtype,
+			&score.Ar,
+			&score.Cs,
+			&score.Hp,
+			&score.Od,
+			&score.SR,
+			&score.Bpm,
+			&score.Userid,
+			&score.ACC,
+			&score.Score,
+			&score.Combo,
+			&score.Maxcombo,
+			&score.Hit50,
+			&score.Hit100,
+			&score.Hit300,
+			&score.Ur,
+			&score.HitMiss,
+			&score.Mode,
+			&score.Mods,
+			&score.Time,
+			&score.PP,
+			&score.AIM,
+			&score.SPEED,
+			&score.ACCURACYATT,
+			&score.Grade,
+			&score.FCPP,
+			&score.BeatmapSet.BeatmapSetId,
+			&score.Artist,
+			&score.Creator,
+			&score.Tags,
+			&score.CoverList,
+			&score.Cover,
+			&score.Preview,
+			&score.Rankedstatus); err != nil {
+
+			fmt.Println(err.Error())
+			return scores, nil
+		}
+		scores = append(scores, score)
+	}
+
+	if err := rows.Err(); err != nil {
+		fmt.Println(err.Error())
+		return scores, nil
+	}
+
+	return scores, nil
+}
+
 func (s *SQLite) GetBanchoTime(start string, end string) ([]types.BanchoTime, error) {
 
 	return []types.BanchoTime{}, nil
@@ -207,8 +286,8 @@ func (s *SQLite) SaveScore(score types.ScoreData) error {
 func (s *SQLite) SaveBeatmapSet(beatmapset types.BeatmapSet) error {
 
 	stmt, err := s.DB.Prepare(`
-	INSERT INTO BeatmapSet (BeatmapSetId, Artist, Tags, CoverList, Cover, Preview, Rankedstatus)
-	VALUES(?, ?, ?, ?, ?, ?, ?)`)
+	INSERT INTO BeatmapSet (BeatmapSetId, Artist, Creator, Tags, CoverList, Cover, Preview, Rankedstatus)
+	VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil
@@ -218,6 +297,7 @@ func (s *SQLite) SaveBeatmapSet(beatmapset types.BeatmapSet) error {
 	_, err = stmt.Exec(
 		beatmapset.BeatmapSetId,
 		beatmapset.Artist,
+		beatmapset.Creator,
 		beatmapset.Tags,
 		beatmapset.CoverList,
 		beatmapset.Cover,
@@ -288,6 +368,7 @@ func createTables(db *sql.DB) {
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS BeatmapSet (
 		BeatmapSetId INT NOT NULL PRIMARY KEY,
 		Artist       TEXT,
+		Creator		 TEXT,
 		Tags         TEXT,
 		CoverList    TEXT,
 		Cover        TEXT,
