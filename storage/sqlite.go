@@ -99,7 +99,6 @@ func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 			&score.ACC,
 			&score.Score,
 			&score.Combo,
-			&score.Maxcombo,
 			&score.Hit50,
 			&score.Hit100,
 			&score.Hit300,
@@ -114,6 +113,10 @@ func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 			&score.ACCURACYATT,
 			&score.Grade,
 			&score.FCPP,
+			&score.Beatmap.BeatmapID,
+			&score.Beatmap.BeatmapSetID,
+			&score.Beatmap.Maxcombo,
+			&score.Beatmap.Version,
 			&score.BeatmapSet.BeatmapSetID,
 			&score.Artist,
 			&score.Creator,
@@ -121,10 +124,7 @@ func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 			&score.CoverList,
 			&score.Cover,
 			&score.Preview,
-			&score.Beatmap.BeatmapID,
-			&score.Beatmap.BeatmapSetID,
-			&score.Beatmap.Maxcombo,
-			&score.Beatmap.Version,
+			&score.Rankedstatus,
 		); err != nil {
 
 			fmt.Println(err.Error())
@@ -148,7 +148,8 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 	}
 
 	stmt, err := s.DB.Prepare(`SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
-	LEFT JOIN Beatmapset on BeatmapSet.BeatmapSetID = Scoredata.BeatmapSetID
+	LEFT JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
+	LEFT JOIN BeatmapSet on BeatmapSet.BeatmapSetID = Beatmap.BeatmapSetID
 	WHERE Userid = ? 
 	AND (Title LIKE ? OR Version LIKE ?)
 	ORDER BY date
@@ -187,7 +188,6 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 			&score.ACC,
 			&score.Score,
 			&score.Combo,
-			&score.Maxcombo,
 			&score.Hit50,
 			&score.Hit100,
 			&score.Hit300,
@@ -202,6 +202,10 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 			&score.ACCURACYATT,
 			&score.Grade,
 			&score.FCPP,
+			&score.Beatmap.BeatmapID,
+			&score.Beatmap.BeatmapSetID,
+			&score.Beatmap.Maxcombo,
+			&score.Beatmap.Version,
 			&score.BeatmapSet.BeatmapSetID,
 			&score.Artist,
 			&score.Creator,
@@ -209,10 +213,7 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 			&score.CoverList,
 			&score.Cover,
 			&score.Preview,
-			&score.Beatmap.BeatmapID,
-			&score.Beatmap.BeatmapSetID,
-			&score.Beatmap.Maxcombo,
-			&score.Beatmap.Version,
+			&score.Rankedstatus,
 		); err != nil {
 
 			fmt.Println(err.Error())
@@ -237,6 +238,26 @@ func (s *SQLite) GetBanchoTime(start string, end string) ([]types.BanchoTime, er
 func (s *SQLite) GetScreenTime(start string, end string) ([]types.ScreenTime, error) {
 
 	return []types.ScreenTime{}, nil
+}
+
+func (s *SQLite) SaveExtendedScore(score types.Ext_ScoreData) error {
+
+	err := s.SaveScore(score.ScoreData)
+	if err != nil {
+		return err
+	}
+
+	err = s.SaveBeatmapSet(score.BeatmapSet)
+	if err != nil {
+		return err
+	}
+
+	err = s.SaveBeatmap(score.Beatmap)
+	if err != nil {
+		return err
+	}
+	return nil
+
 }
 
 func (s *SQLite) SaveScore(score types.ScoreData) error {
@@ -372,7 +393,7 @@ func createTables(db *sql.DB) {
 		Ur REAL,
 		HitMiss INTEGER,
 		Mode INTEGER,
-		Mods INTEGER,
+		Mods TEXT,
 		Time INTEGER,
 		PP REAL,
 		AIM REAL,

@@ -18,6 +18,8 @@ type Storage interface {
 	//Start, Endtime
 	GetScreenTime(string, string) ([]types.ScreenTime, error)
 
+	SaveExtendedScore(types.Ext_ScoreData) error
+
 	SaveScore(types.ScoreData) error
 
 	SaveBeatmap(types.Beatmap) error

@@ -15,8 +15,6 @@ func (s *Server) ScorePage(c *fiber.Ctx) error {
 
 	scoreid := c.Params("id")
 
-	fmt.Println(scoreid)
-
 	sid, err := strconv.Atoi(scoreid)
 	if err != nil {
 		return c.SendStatus(404)
@@ -37,6 +35,10 @@ func (s *Server) ScorePage(c *fiber.Ctx) error {
 		LocalRank:   "2928",
 		Country:     "Germany",
 		Countrycode: "de",
+	}
+
+	if len(scores) == 0 {
+		return c.SendStatus(404)
 	}
 
 	component := views.ScoreSite(player, scores)

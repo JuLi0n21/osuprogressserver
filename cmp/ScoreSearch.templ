@@ -3,6 +3,8 @@ package cmp
 import "osuprogressserver/types"
 
 templ ScoreSearch(scores []types.Ext_ScoreData, limit int, offset int){
+    
+    if len(scores) != 0 {
    <form class="text-center mt-4 mb-4"
    hx-get="/api/scoresearch"
    hx-trigger="input delay:500ms"
@@ -18,5 +20,7 @@ templ ScoreSearch(scores []types.Ext_ScoreData, limit int, offset int){
             <input id="to" name="to" class="w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="Date"></input>
         </div>
     </form>
+    }
     @ScoreContainer(scores, limit, offset)
+    
 }
