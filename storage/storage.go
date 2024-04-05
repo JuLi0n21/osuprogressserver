@@ -20,6 +20,8 @@ type Storage interface {
 
 	SaveScore(types.ScoreData) error
 
+	SaveBeatmap(types.Beatmap) error
+
 	SaveBeatmapSet(types.BeatmapSet) error
 
 	SaveBanchoTime(types.BanchoTime) error

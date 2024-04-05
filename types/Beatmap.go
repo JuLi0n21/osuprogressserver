@@ -1,6 +1,8 @@
 package types
 
 type Beatmap struct {
-	BeatmapId    int
-	BeatmapSetId int
+	BeatmapID    int
+	BeatmapSetID int
+	Maxcombo     int
+	Version      string
 }

@@ -1,7 +1,7 @@
 package types
 
 type BeatmapSet struct {
-	BeatmapSetId int
+	BeatmapSetID int
 	Artist       string
 	Creator      string
 	Tags         string
