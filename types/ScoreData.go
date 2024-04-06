@@ -1,7 +1,7 @@
 package types
 
 type ScoreData struct {
-	ScoreId     string
+	ScoreId     string `json:"id"`
 	Title       string
 	Date        string
 	BeatmapID   int

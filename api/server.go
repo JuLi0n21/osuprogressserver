@@ -21,7 +21,7 @@ func NewServer(port string, store storage.Storage) *Server {
 func (s *Server) Start() error {
 	app := fiber.New()
 
-	//app.Use(SessionChecker)
+	app.Use(SessionChecker)
 
 	app.Use(func(c *fiber.Ctx) error {
 		return c.Next()

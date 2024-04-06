@@ -29,7 +29,10 @@ func SessionChecker(c *fiber.Ctx) error {
 		})
 	}
 
-	c.Locals("userid", userid)
+	_ = userid
+
+	c.Locals("userid", 14100399)
+
 	return c.Next()
 }
 
