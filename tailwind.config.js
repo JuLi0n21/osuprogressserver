@@ -4,6 +4,11 @@ module.exports = {
       "./cmp/**/*.templ",
       "./views/**/*.templ"
      ],
+     safelist: [
+      {
+        pattern:
+      }
+     ],
      theme: {
       extend: {},
     },

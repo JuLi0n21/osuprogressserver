@@ -3,7 +3,7 @@ package cmp
 import "osuprogressserver/types"
 
 templ ScoreSearch(scores []types.Ext_ScoreData, limit int, offset int){
-    
+    <div>
     if len(scores) != 0 {
    <form class="text-center mt-4 mb-4"
    hx-get="/api/scoresearch"
@@ -13,14 +13,15 @@ templ ScoreSearch(scores []types.Ext_ScoreData, limit int, offset int){
    onkeydown="if (event.key === 'Enter') event.preventDefault();"> 
     <h1>Scores</h1>
         <div class="flex rounded-lg text--yellow justify-around">
-            <button class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="button" >Fcable</button>
-            <button class="border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="button" >Recent</button>
-            <input id="query" name="query" class="w-1/2 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="text" placeholder="Type to Search..."></input>
-            <input id="from" name="from" class="w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="Date"></input>
-            <input id="to" name="to" class="w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 backdrop--dark" type="Date"></input>
+            <button class={ "border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 " + theme(ctx).Dark} type="button" >Fcable</button>
+            <button class={"border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 " + theme(ctx).Dark } type="button" >Recent</button>
+            <input id="query" name="query" class={"w-1/2 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 " + theme(ctx).Dark } type="text" placeholder="Type to Search..."></input>
+            <input id="from" name="from" class={"w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 " + theme(ctx).Dark } type="Date"></input>
+            <input id="to" name="to" class={"w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 " + theme(ctx).Dark } type="Date"></input>
         </div>
     </form>
     }
     @ScoreContainer(scores, limit, offset)
-    
+    <img src="/assets/img/loading.gif" class=""></img>
+    </div>
 }

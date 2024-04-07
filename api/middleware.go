@@ -1,8 +1,10 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
+	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -47,4 +49,11 @@ func randString(length int) string {
 		b[i] = chars[rand.Intn(len(chars))]
 	}
 	return string(b)
+}
+
+func C(next http.Handler, context context.Context) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }

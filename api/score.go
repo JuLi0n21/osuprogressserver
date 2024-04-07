@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 	"fmt"
+	"osuprogressserver/cmp"
 	"osuprogressserver/types"
-	"osuprogressserver/views"
 	"strconv"
 
 	"github.com/a-h/templ"
@@ -43,24 +43,20 @@ func (s *Server) ScorePage(c *fiber.Ctx) error {
 	}
 
 	themes := types.Theme{
-		Dark:         "backdrop--dark",
-		Medium_dark:  "backdrop--medium-dark",
-		Medium:       "backdrop--medium",
-		Medium_light: "backdrop--medium-light",
-		Light:        "backdrop--light",
+		Dark:         "score-backdrop--dark",
+		Medium_dark:  "score-backdrop--medium--dark",
+		Medium:       "score-backdrop--medium",
+		Medium_light: "score-backdrop--medium--light",
+		Light:        "score-backdrop--light",
 	}
 
-	_ = themes
+	ctx := context.WithValue(context.Background(), "theme", themes)
 
-	//ctx := context.WithValue(context.Background(), "theme", themes)
-	ctx := context.WithValue(context.Background(), "theme", "test")
-	templ.InitializeContext(ctx)
-
-	component := views.ScoreSite(player, scores)
+	component := cmp.View_ScoreSite(player, scores)
 
 	component.Render(ctx, c.Context().Request.BodyWriter())
 
-	handler := adaptor.HTTPHandler(templ.Handler(component))
+	handler := adaptor.HTTPHandler(C(templ.Handler(component), ctx))
 
 	return handler(c)
 }

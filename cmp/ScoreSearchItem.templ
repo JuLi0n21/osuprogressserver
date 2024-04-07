@@ -5,7 +5,7 @@ import "strings"
 
 templ ScoreSearchItem(score types.Ext_ScoreData){
     <a class="flex justify-center mb-0" href={ templ.SafeURL("/score/"+score.ScoreId) } rel="noopener noreferrer">
-	<div class="flex backdrop--light hover:bg-pink-900 h-16 rounded justify-between m-4 w-5/6 mb-1 mt-1">
+	<div class={ "flex hover:bg-pink-900 h-16 rounded justify-between m-4 w-5/6 mb-1 mt-1 " + theme(ctx).Light}>
 		<div class="flex flex-col max-w-[100px] rounded justify-evenly w-1/6">
 			<div class="flex justify-center">
 				<p class="text--gray">{ score.Rankedstatus } </p>
@@ -14,7 +14,7 @@ templ ScoreSearchItem(score types.Ext_ScoreData){
 				<img src={ Img(score.Grade) } alt={ score.Grade} class="w-20" loading="lazy"></img>
             </div>
 		</div>
-		<div class="backdrop--dark icon rounded-lg flex-nowrap">
+		<div class={ "icon rounded-lg flex-nowrap " + theme(ctx).Dark }>
 			<img src={ score.CoverList }class="w-16 h-16" alt="?" loading="lazy"></img>
         </div>
 
@@ -23,7 +23,7 @@ templ ScoreSearchItem(score types.Ext_ScoreData){
 				<p class="text-white whitespace-nowrap overflow-hidden">{ score.Title } by { score.Artist }</p>
 			</div>
 			<div class="flex justify-between">
-				<p class="text-white whitespace-nowrap overflow-hidden">{ i(score.Score) } / { i(score.Combo) } ({ i(score.Maxcombo) }) </p>   
+				<p class="text-white whitespace-nowrap overflow-hidden">{ I(score.Score) } / { I(score.Combo) } ({ I(score.Maxcombo) }) </p>   
 					
 						<div class="flex">
 						        for _, mod := range strings.Split(score.Mods, ",") {
@@ -32,7 +32,7 @@ templ ScoreSearchItem(score types.Ext_ScoreData){
 						</div>
 			</div>
 			<div class="flex">
-				<p class="text--dark--yellow whitespace-nowrap overflow-hidden">{ i(score.Beatmap.BeatmapID) }</p>
+				<p class="text--dark--yellow whitespace-nowrap overflow-hidden">{ I(score.Beatmap.BeatmapID) }</p>
 				<p class="text--gray ml-4 whitespace-nowrap overflow-hidden">{ score.Date } ({ score.Playtype})</p>
 			</div>
 		</div>
@@ -51,7 +51,7 @@ templ ScoreSearchItem(score types.Ext_ScoreData){
 			</div>
 		</div>
 
-		<div class="flex flex-col justify-evenly rounded backdrop--medium--light w-1/6 max-w-[100px]">
+		<div class={ "flex flex-col justify-evenly rounded w-1/6 max-w-[100px] " + theme(ctx).Medium_light }>
 			<div class="flex justify-center">
 				<p class="text--pink">6.29pp</p>
 			</div>

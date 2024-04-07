@@ -2,8 +2,8 @@ package api
 
 import (
 	"fmt"
+	"osuprogressserver/cmp"
 	"osuprogressserver/types"
-	"osuprogressserver/views"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
@@ -95,7 +95,7 @@ func (s *Server) Index(c *fiber.Ctx) error {
 		fmt.Println(err)
 	}
 
-	component := views.Index(player, stats, scores)
+	component := cmp.View_Index(player, stats, scores)
 
 	handler := adaptor.HTTPHandler(templ.Handler(component))
 

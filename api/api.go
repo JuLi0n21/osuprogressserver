@@ -1,9 +1,11 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"osuprogressserver/cmp"
 	"osuprogressserver/types"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
@@ -29,8 +31,9 @@ func (s *Server) ScoreSearch(c *fiber.Ctx) error {
 
 	q.limit = c.QueryInt("limit", 10)
 	q.offset = c.QueryInt("offset", 0)
+	q.query = c.Query("query", "")
 
-	//fmt.Println(c.Locals("userid"))
+	fmt.Println(q)
 
 	if c.Locals("userid") != nil {
 		q.userid = c.Locals("userid").(int)
@@ -47,13 +50,28 @@ func (s *Server) ScoreSearch(c *fiber.Ctx) error {
 		return err
 	}
 
-	if h := c.GetReqHeaders()["Hx-Request"]; len(h) > 0 {
-		component := cmp.ScoreContainer(scores, q.limit, q.offset+len(scores))
-
-		handler := adaptor.HTTPHandler(templ.Handler(component))
-
-		return handler(c)
+	if h := c.GetReqHeaders()["Hx-Request"]; len(h) == 0 {
+		return c.JSON(scores)
 	}
 
-	return c.JSON(scores)
+	themes := cmp.DefaultTheme()
+
+	if strings.Contains(c.Get("Referer"), "/score/") {
+		themes = types.Theme{
+			Dark:         "score-backdrop--dark",
+			Medium_dark:  "score-backdrop--medium--dark",
+			Medium:       "score-backdrop--medium",
+			Medium_light: "score-backdrop--medium--light",
+			Light:        "score-backdrop--light",
+		}
+
+	}
+
+	ctx := context.WithValue(context.Background(), "theme", themes)
+
+	component := cmp.ScoreContainer(scores, q.limit, q.offset+len(scores))
+
+	handler := adaptor.HTTPHandler(C(templ.Handler(component), ctx))
+
+	return handler(c)
 }

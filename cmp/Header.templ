@@ -7,7 +7,7 @@ templ Header(player types.User, stats types.Stats) {
     <div style="background-size: cover; background-position: center center; height: 250px">
       <img src={ player.Banner } alt="User Banner" style="width: 100%; height: 100%; object-fit: cover;"></img>
     </div> 
-        <a href={ templ.SafeURL("https://osu.ppy.sh/users/"+ i(player.UserId))  } class="left-12 inline-block rounded -top-12 relative max-h-0 h-0  hover:scale-105" target="_blank" rel="noopener noreferrer">
+        <a href={ templ.SafeURL("https://osu.ppy.sh/users/"+ I(player.UserId))  } class="left-12 inline-block rounded -top-12 relative max-h-0 h-0  hover:scale-105" target="_blank" rel="noopener noreferrer">
             <img src={ player.Avatar } style="width:100px;" class=""></img>
         </a>
     <div class="flex justify-around">
@@ -21,7 +21,7 @@ templ Header(player types.User, stats types.Stats) {
                 ⏰ { stats.Time } [{ stats.Status}]
             </p>
             <p class="">💻 { stats.Screen }</p>
-            <p class="">📂 { i(stats.Count) }</p>
+            <p class="">📂 { I(stats.Count) }</p>
         </div>
     </div>
 </div>
