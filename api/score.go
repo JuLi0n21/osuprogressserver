@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"osuprogressserver/types"
 	"osuprogressserver/views"
@@ -41,7 +42,23 @@ func (s *Server) ScorePage(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	}
 
+	themes := types.Theme{
+		Dark:         "backdrop--dark",
+		Medium_dark:  "backdrop--medium-dark",
+		Medium:       "backdrop--medium",
+		Medium_light: "backdrop--medium-light",
+		Light:        "backdrop--light",
+	}
+
+	_ = themes
+
+	//ctx := context.WithValue(context.Background(), "theme", themes)
+	ctx := context.WithValue(context.Background(), "theme", "test")
+	templ.InitializeContext(ctx)
+
 	component := views.ScoreSite(player, scores)
+
+	component.Render(ctx, c.Context().Request.BodyWriter())
 
 	handler := adaptor.HTTPHandler(templ.Handler(component))
 
