@@ -13,7 +13,7 @@ templ ScoreContainer(scores []types.Ext_ScoreData, limit int, offset int) {
             hx-target="#loadmore"
             hx-swap="outerHTML transition:true"
             hx-include="#from, #to, #query, #limit, #offset"
-            class={ "flex rounded-md hover:bg-pink-900 justify-between text-center cursor-pointer rounded-lg w-5/6 select-none " + theme(ctx).Medium_light }>
+            class={ "flex rounded-md hover:bg-pink-900 justify-between mb-1 mt-1 m-4 text-center cursor-pointer rounded-lg w-5/6 select-none " + theme(ctx).Medium_light }>
             if (len(scores) == 0) {
                     <img src="/assets/img/not-found.gif" class="rounded-lg w-16 h-16" alt="?"></img>
                     <p class="flex-1 text-white p-5"> No Scores Found, Retry</p>
@@ -24,21 +24,6 @@ templ ScoreContainer(scores []types.Ext_ScoreData, limit int, offset int) {
                 <input id="limit" name="limit" type="hidden" value={I(limit)}></input>
                 <input id="offset" name="offset" type="hidden" value={I(offset)}></input>
             </div>
-              
         </div> 
-/*
-        <div>
-            <div class="flex justify-center mb-0">
-                <div class={ "flex h-16 rounded justify-between m-4 w-5/6 mb-1 mt-1 " + theme(ctx).Medium_light}>
-                    <div class="flex-1"></div>
-                        <img src="/assets/img/not-found.gif" class="rounded-lg w-16 h-16" alt="?"></img>
-                        <p class="flex-1 text-white text-center "> { "No Scores: " }</p>
-                        <img src="/assets/img/not-found.gif" class=" rounded-lg  w-16 h-16" alt="?"></img>
-
-                    <div class="flex-1"></div>
-                </div>
-            </div>
-        </div>
-  */  
     </div>
 }

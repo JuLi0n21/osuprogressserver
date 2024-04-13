@@ -33,7 +33,7 @@ func (s *Server) ScoreSearch(c *fiber.Ctx) error {
 	q.offset = c.QueryInt("offset", 0)
 	q.query = c.Query("query", "")
 
-	fmt.Println(q)
+	//fmt.Println(q)
 
 	if c.Locals("userid") != nil {
 		q.userid = c.Locals("userid").(int)

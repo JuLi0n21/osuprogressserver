@@ -88,6 +88,7 @@ func (s *Server) Index(c *fiber.Ctx) error {
 		BeatmapSet: beatmapSet,
 	}
 
+	// _ = extScoreData
 	s.store.SaveExtendedScore(extScoreData)
 
 	scores, err := s.store.GetExtScore("", 14100399, 10, 0)

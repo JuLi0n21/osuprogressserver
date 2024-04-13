@@ -162,7 +162,7 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 
 	var scores []types.Ext_ScoreData
 	var q = "%" + query + "%"
-	fmt.Println(q, limit, offset, userid)
+	//fmt.Println(q, limit, offset, userid)
 	rows, err := stmt.Query(userid, q, q, limit, offset)
 	if err != nil {
 		fmt.Println(err.Error())
