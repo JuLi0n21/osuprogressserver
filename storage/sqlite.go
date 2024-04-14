@@ -480,6 +480,7 @@ func createTables(db *sql.DB) {
 		LocalRank   TEXT,
 		Country     TEXT,
 		Countrycode TEXT,
+		Mode		TEXT,
 		Tokentype TEXT,
 		Expiresin INTEGER,
 		Accesstoken TEXT,

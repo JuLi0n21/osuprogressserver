@@ -79,5 +79,6 @@ type User struct {
 	LocalRank   string
 	Country     string
 	Countrycode string
+	Mode        string
 	Auth        AuthUser
 }

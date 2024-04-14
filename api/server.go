@@ -4,6 +4,7 @@ import (
 	"osuprogressserver/storage"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 type Server struct {
@@ -21,19 +22,24 @@ func NewServer(port string, store storage.Storage) *Server {
 func (s *Server) Start() error {
 	app := fiber.New()
 
-	app.Use(SessionChecker)
-
-	app.Use(func(c *fiber.Ctx) error {
-		return c.Next()
-	})
+	app.Use(
+		logger.New(),
+	)
 
 	api := app.Group("/api")
-
 	api.Get("/scoresearch/*", s.ScoreSearch)
 
-	app.Static("assets", "./static")
+	oauth := app.Group("/oauth")
+	oauth.Get("/code", s.Oauth)
+	oauth.Get("/token", s.OauthAccess)
+
 	app.Get("/", s.Index)
+	app.Static("assets", "./static")
+
+	app.Use(SessionChecker)
+
 	app.Get("/score/:id", s.ScorePage)
+	app.Get("/login", s.Login)
 
 	return app.Listen(s.port)
 }

@@ -1,0 +1,13 @@
+package cmp
+
+templ Login(clientid string, redirect_uri string, scopes string, state string){
+    @Head()
+    <body class={ "flex justify-center text-white " + theme(ctx).Dark }>
+    <div class={ "content rounded-lg" + theme(ctx).Medium }>
+        <a  class={ "rounded-full " + theme(ctx).Light  }
+        href={ templ.SafeURL("https://osu.ppy.sh/oauth/authorize?client_id=" + clientid + "&redirect_id=" + redirect_uri + "&response_type=code&scopes=" + scopes + "&state="+ state) }>
+        Login with osu!
+        </a>
+        </div>
+    </body>
+}

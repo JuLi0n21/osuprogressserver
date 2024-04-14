@@ -5,49 +5,53 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"osuprogressserver/types"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type UserContext struct {
-	userid     int
-	sessoionid string
+	User     types.User
+	cookieid string
 }
 
-var userSessions = map[string]UserContext{}
+var UserSessions = map[string]UserContext{}
 
 func SessionChecker(c *fiber.Ctx) error {
 
-	if c.Path() == "/" {
-		return c.Next()
-	}
-
-	sessionID := c.Cookies("session")
-	user, ok := userSessions[sessionID]
+	CookieID := c.Cookies("session")
+	user, ok := UserSessions[CookieID]
 
 	if !ok {
 		user = UserContext{
-			userid:     -1,
-			sessoionid: generateUserID(),
+			User:     types.User{},
+			cookieid: generateUserID(),
 		}
 
-		userSessions[sessionID] = user
-		fmt.Println(user)
+		UserSessions[CookieID] = user
 		c.Cookie(&fiber.Cookie{
-			Name:  "session",
-			Value: user.sessoionid,
+			Name:     "session",
+			Value:    user.cookieid,
+			HTTPOnly: true,
+			Expires:  time.Now().AddDate(1, 0, 0),
+			SameSite: "/",
 		})
 	}
 
-	_ = user.userid
+	fmt.Println(user.User.UserId)
+	if user.User.UserId == 0 && c.Path() != "/login" {
 
-	c.Locals("userid", user.userid)
+		return c.Redirect("/login")
+	}
+
+	c.Locals("userid", user.User.UserId)
 
 	return c.Next()
 }
 
 func generateUserID() string {
-	return "user_" + randString(64)
+	return "session_" + randString(64)
 }
 
 func randString(length int) string {
