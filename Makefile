@@ -10,3 +10,6 @@ run:
 
 setup:
 	go mod download
+
+prod:
+	npx tailwindcss -i ./static/input.css -o ./static/style.css && go run .
