@@ -9,7 +9,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-var userSessions = map[string]string{}
+type UserContext struct {
+	userid     int
+	sessoionid string
+}
+
+var userSessions = map[string]UserContext{}
 
 func SessionChecker(c *fiber.Ctx) error {
 
@@ -18,22 +23,25 @@ func SessionChecker(c *fiber.Ctx) error {
 	}
 
 	sessionID := c.Cookies("session")
-	userid, ok := userSessions[sessionID]
+	user, ok := userSessions[sessionID]
 
 	if !ok {
-		userID := generateUserID()
+		user = UserContext{
+			userid:     -1,
+			sessoionid: generateUserID(),
+		}
 
-		userSessions[sessionID] = userID
-		fmt.Println(userID)
+		userSessions[sessionID] = user
+		fmt.Println(user)
 		c.Cookie(&fiber.Cookie{
 			Name:  "session",
-			Value: userID,
+			Value: user.sessoionid,
 		})
 	}
 
-	_ = userid
+	_ = user.userid
 
-	c.Locals("userid", 14100399)
+	c.Locals("userid", user.userid)
 
 	return c.Next()
 }

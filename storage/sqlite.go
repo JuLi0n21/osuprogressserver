@@ -239,6 +239,13 @@ func (s *SQLite) GetScreenTime(start string, end string) ([]types.ScreenTime, er
 
 	return []types.ScreenTime{}, nil
 }
+func (s *SQLite) GetUser(Userid int) (types.User, error) {
+	return types.User{}, nil
+}
+
+func (s *SQLite) SaveUser(User types.User) error {
+	return nil
+}
 
 func (s *SQLite) SaveExtendedScore(score types.Ext_ScoreData) error {
 
@@ -401,6 +408,7 @@ func createTables(db *sql.DB) {
 		ACCURACYATT REAL,
 		Grade TEXT,
 		FCPP REAL,
+		FOREIGN KEY (Userid) REFERENCES Users(Userid),
 		UNIQUE(Userid, BeatmapID, Combo, Hit300, Hit100, Hit50)
 		)`)
 	if err != nil {
@@ -458,6 +466,24 @@ func createTables(db *sql.DB) {
 		Screen TEXT,
 		Time INTEGER,
 		Userid INTEGER
+	)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS Users (
+		Userid INTEGER NOT NULL PRIMARY KEY,
+		Username    TEXT,
+		Banner      TEXT,
+		Avatar      TEXT,
+		GlobalRank  TEXT,
+		LocalRank   TEXT,
+		Country     TEXT,
+		Countrycode TEXT,
+		Tokentype TEXT,
+		Expiresin INTEGER,
+		Accesstoken TEXT,
+		Refreshtoken TEXT
 	)`)
 	if err != nil {
 		log.Fatal(err)

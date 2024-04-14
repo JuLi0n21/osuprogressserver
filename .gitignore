@@ -9,3 +9,4 @@ tmp/
 osuprogressserver
 node_modules/
 style.css
+.ENV

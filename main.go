@@ -6,12 +6,15 @@ import (
 	"log"
 	"osuprogressserver/api"
 	"osuprogressserver/storage"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
 
-	for i := 0; i < 100; i++ {
-		//fmt.Println(i++)
+	err := godotenv.Load()
+	if err != nil {
+		panic("uhh no .env")
 	}
 
 	port := flag.String("port", ":3000", "Serverport")

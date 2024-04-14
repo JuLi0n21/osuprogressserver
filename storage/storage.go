@@ -18,6 +18,12 @@ type Storage interface {
 	//Start, Endtime
 	GetScreenTime(string, string) ([]types.ScreenTime, error)
 
+	//Userid
+	GetUser(int) (types.User, error)
+
+	//User
+	SaveUser(types.User) error
+
 	SaveExtendedScore(types.Ext_ScoreData) error
 
 	SaveScore(types.ScoreData) error
