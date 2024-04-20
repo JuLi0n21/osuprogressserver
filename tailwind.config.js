@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     "./cmp/**/*.templ",
-    "./views/**/*.templ"
+    "./cmp/**/*.go"
   ],
   theme: {
     extend: {},
