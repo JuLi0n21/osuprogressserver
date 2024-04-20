@@ -24,6 +24,7 @@ func (s *Server) Oauth(c *fiber.Ctx) error {
 
 	clientsecret := os.Getenv("CLIENT_SECRET")
 	clientid := os.Getenv("CLIENT_ID")
+	redirecturi := os.Getenv("REDIRECT_URI")
 
 	CookieID := c.Cookies("session")
 	user, ok := UserSessions[CookieID]
@@ -40,6 +41,7 @@ func (s *Server) Oauth(c *fiber.Ctx) error {
 			"client_secret": {clientsecret},
 			"code":          {code},
 			"grant_type":    {"authorization_code"},
+			"redirect_uri":  {redirecturi},
 		}
 
 		req, err := http.NewRequest("POST", "https://osu.ppy.sh/oauth/token", bytes.NewBufferString(body.Encode()))
@@ -61,7 +63,13 @@ func (s *Server) Oauth(c *fiber.Ctx) error {
 		defer res.Body.Close()
 
 		if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
-			return errors.New("Authorization Request Failed!")
+			data, err := io.ReadAll(res.Body)
+			if err != nil {
+				return err
+			}
+
+			fmt.Println(res.Status, data)
+			return errors.New(string(data))
 		}
 
 		fmt.Println("Token Rechived")
