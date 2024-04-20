@@ -12,4 +12,4 @@ setup:
 	go mod download
 
 prod:
-	npx tailwindcss -i ./static/input.css -o ./static/style.css && go build .
+	npx tailwindcss -i ./static/input.css -o ./static/style.css && templ generate && go build .
