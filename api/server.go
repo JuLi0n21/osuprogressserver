@@ -26,20 +26,23 @@ func (s *Server) Start() error {
 		logger.New(),
 	)
 
+	app.Static("assets", "./static")
+
 	api := app.Group("/api")
 	api.Get("/scoresearch/*", s.ScoreSearch)
+
+	app.Use(CookieClicker)
+	app.Get("/", s.Index)
+
+	app.Get("/login", s.Login)
 
 	oauth := app.Group("/oauth")
 	oauth.Get("/code", s.Oauth)
 	oauth.Get("/token", s.OauthAccess)
 
-	app.Get("/", s.Index)
-	app.Static("assets", "./static")
-
-	app.Use(SessionChecker)
-
+	app.Use(Authorization)
+	app.Get("/me", s.Userpage)
 	app.Get("/score/:id", s.ScorePage)
-	app.Get("/login", s.Login)
 
 	return app.Listen(s.port)
 }

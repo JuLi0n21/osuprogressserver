@@ -111,7 +111,7 @@ func (s *Server) Oauth(c *fiber.Ctx) error {
 			Auth:        user.Auth,
 		}
 
-		s.store.SaveUser(newuser)
+		err = s.store.SaveUser(newuser)
 		if err != nil {
 			return err
 		}
@@ -122,7 +122,7 @@ func (s *Server) Oauth(c *fiber.Ctx) error {
 		}
 	}
 
-	c.Redirect("/")
+	c.Redirect("/me")
 
 	return nil
 }

@@ -6,6 +6,9 @@ type Storage interface {
 	//userid, offset, limit
 	GetScore(int, int, int) ([]types.ScoreData, error)
 
+	//Show random Scores
+	GetRandomScores(int) ([]types.Ext_ScoreData, error)
+
 	//userid, includes beatmapset info
 	GetExtScore(string, int, int, int) ([]types.Ext_ScoreData, error)
 

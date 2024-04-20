@@ -141,6 +141,87 @@ func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 	return scores, nil
 }
 
+func (s *SQLite) GetRandomScores(limit int) ([]types.Ext_ScoreData, error) {
+
+	stmt, err := s.DB.Prepare(`SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
+	LEFT JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
+	LEFT JOIN BeatmapSet on BeatmapSet.BeatmapSetID = Beatmap.BeatmapSetID
+	ORDER BY RANDOM() LIMIT ?`)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return []types.Ext_ScoreData{}, nil
+	}
+
+	var scores []types.Ext_ScoreData
+	//fmt.Println(q, limit, offset, userid)
+	rows, err := stmt.Query(limit)
+	if err != nil {
+		fmt.Println(err.Error())
+		return scores, nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var score types.Ext_ScoreData
+		if err := rows.Scan(
+			&score.ScoreId,
+			&score.Title,
+			&score.Date,
+			&score.ScoreData.BeatmapID,
+			&score.Playtype,
+			&score.Ar,
+			&score.Cs,
+			&score.Hp,
+			&score.Od,
+			&score.SR,
+			&score.Bpm,
+			&score.Userid,
+			&score.ACC,
+			&score.Score,
+			&score.Combo,
+			&score.Hit50,
+			&score.Hit100,
+			&score.Hit300,
+			&score.Ur,
+			&score.HitMiss,
+			&score.Mode,
+			&score.Mods,
+			&score.Time,
+			&score.PP,
+			&score.AIM,
+			&score.SPEED,
+			&score.ACCURACYATT,
+			&score.Grade,
+			&score.FCPP,
+			&score.Beatmap.BeatmapID,
+			&score.Beatmap.BeatmapSetID,
+			&score.Beatmap.Maxcombo,
+			&score.Beatmap.Version,
+			&score.BeatmapSet.BeatmapSetID,
+			&score.Artist,
+			&score.Creator,
+			&score.Tags,
+			&score.CoverList,
+			&score.Cover,
+			&score.Preview,
+			&score.Rankedstatus,
+		); err != nil {
+
+			fmt.Println(err.Error())
+			return scores, nil
+		}
+		scores = append(scores, score)
+	}
+
+	if err := rows.Err(); err != nil {
+		fmt.Println(err.Error())
+		return scores, nil
+	}
+
+	return scores, nil
+}
+
 func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([]types.Ext_ScoreData, error) {
 
 	if limit > 100 || limit == 0 {

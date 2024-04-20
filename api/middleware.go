@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"osuprogressserver/types"
@@ -18,31 +17,28 @@ type UserContext struct {
 
 var UserSessions = map[string]UserContext{}
 
-func SessionChecker(c *fiber.Ctx) error {
+func CookieClicker(c *fiber.Ctx) error {
 
 	CookieID := c.Cookies("session")
 	user, ok := UserSessions[CookieID]
 
 	if !ok {
+
+		cookie := generateUserID(56)
 		user = UserContext{
 			User:     types.User{},
-			cookieid: generateUserID(),
+			cookieid: cookie,
 		}
 
-		UserSessions[CookieID] = user
+		UserSessions[cookie] = user
 		c.Cookie(&fiber.Cookie{
 			Name:     "session",
 			Value:    user.cookieid,
 			HTTPOnly: true,
 			Expires:  time.Now().AddDate(1, 0, 0),
 			SameSite: "/",
+			Secure:   true,
 		})
-	}
-
-	fmt.Println(user.User.UserId)
-	if user.User.UserId == 0 && c.Path() != "/login" {
-
-		return c.Redirect("/login")
 	}
 
 	c.Locals("userid", user.User.UserId)
@@ -50,17 +46,26 @@ func SessionChecker(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func generateUserID() string {
-	return "session_" + randString(64)
+func Authorization(c *fiber.Ctx) error {
+
+	uid := c.Locals("userid").(int)
+
+	if uid == 0 {
+
+		return c.Redirect("/login")
+	}
+
+	return c.Next()
+
 }
 
-func randString(length int) string {
+func generateUserID(length int) string {
 	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, length)
 	for i := range b {
 		b[i] = chars[rand.Intn(len(chars))]
 	}
-	return string(b)
+	return "session_" + string(b)
 }
 
 func C(next http.Handler, context context.Context) http.Handler {
