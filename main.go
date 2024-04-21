@@ -19,7 +19,7 @@ func main() {
 
 	port := flag.String("port", ":3000", "Serverport")
 	flag.Parse()
-	storage, err := storage.NewSQLite("Data/test.db")
+	storage, err := storage.NewSQLite("Sqlite.db")
 	if err != nil {
 		log.Fatal(err)
 	}
