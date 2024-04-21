@@ -4,9 +4,12 @@ templ Login(clientid string, redirect_uri string, scopes string, state string){
     @Head()
     <body class={ "flex justify-center text-white " + theme(ctx).Dark }>
     <div class={ "content rounded-lg" + theme(ctx).Medium }>
-        <a  class={ "rounded-full " + theme(ctx).Light  }
-        href={ templ.SafeURL("https://osu.ppy.sh/oauth/authorize?client_id=" + clientid + "&redirect_uri=" + redirect_uri + "&response_type=code&scope=" + scopes + "&state="+ state) }>
-        Login with osu!
+        <a href={ templ.SafeURL("https://osu.ppy.sh/oauth/authorize?client_id=" + clientid + "&redirect_uri=" + redirect_uri + "&response_type=code&scope=" + scopes + "&state="+ state) }>
+            <div class={ "flex p-5 ml-20 mr-20 justify-center rounded-full " + theme(ctx).Light }>
+            <p class="flex-shrink text-2xl">
+            { ">> Login with osu! <<"}
+            </p>
+            </div>
         </a>
         </div>
     </body>
