@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"log/slog"
 	"math/rand"
 	"net/http"
 	"osuprogressserver/types"
@@ -23,7 +24,7 @@ func CookieClicker(c *fiber.Ctx) error {
 	user, ok := UserSessions[CookieID]
 
 	if !ok {
-
+		slog.Log(c.Context(), slog.LevelInfo, "New Session Created")
 		cookie := generateUserID(56)
 		user = UserContext{
 			User:     types.User{},
@@ -32,12 +33,14 @@ func CookieClicker(c *fiber.Ctx) error {
 
 		UserSessions[cookie] = user
 		c.Cookie(&fiber.Cookie{
-			Name:     "session",
-			Value:    user.cookieid,
-			HTTPOnly: true,
-			Expires:  time.Now().AddDate(1, 0, 0),
-			SameSite: "/",
-			Secure:   true,
+			Name:        "session",
+			Value:       user.cookieid,
+			HTTPOnly:    true,
+			Expires:     time.Now().AddDate(1, 0, 0),
+			Path:        "/",
+			Secure:      true,
+			SessionOnly: false,
+			SameSite:    "None",
 		})
 	}
 
