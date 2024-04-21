@@ -40,7 +40,7 @@ func (s *Server) Start() error {
 	oauth.Get("/code", s.Oauth)
 	oauth.Get("/token", s.OauthAccess)
 
-	app.Use(Authorization)
+	//app.Use(Authorization)
 	app.Get("/me", s.Userpage)
 	app.Get("/score/:id", s.ScorePage)
 
