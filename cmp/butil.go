@@ -21,6 +21,13 @@ func theme(ctx context.Context) types.Theme {
 	return DefaultTheme()
 }
 
+func player(ctx context.Context) types.UserContext {
+	if userc, ok := ctx.Value("player").(types.UserContext); ok {
+		return userc
+	}
+	return types.UserContext{}
+}
+
 func DefaultTheme() types.Theme {
 	return types.Theme{
 		Dark:         "backdrop--dark",

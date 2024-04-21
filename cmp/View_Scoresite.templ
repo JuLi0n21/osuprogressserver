@@ -4,14 +4,14 @@ import "osuprogressserver/types"
 import "strings"
 import "strconv"
 
-templ View_ScoreSite(player types.User, scores []types.Ext_ScoreData){
+templ View_ScoreSite(scores []types.Ext_ScoreData){
    @Head()
     <body class={ "flex justify-center text-white " + theme(ctx).Dark }>
      @FixedIcons()
     <div class={ "content w-1/2 rounded-lg text-white " + theme(ctx).Dark }>
         <div id="ScoreData">
-        @header(player, scores[0])
-        @attributes(player, scores[0])
+        @header(scores[0])
+        @attributes(scores[0])
         @Spacer()
         @progress(scores[0])
         @Spacer()
@@ -21,7 +21,7 @@ templ View_ScoreSite(player types.User, scores []types.Ext_ScoreData){
     </body>
 }
 
-templ header(player types.User, score types.Ext_ScoreData){
+templ header(score types.Ext_ScoreData){
     <div class="relative">
      <p class="absolute top-0 left-6">{ score.Rankedstatus }</p>
         <div class="flex justify-around m-4 text-xl"> 
@@ -42,7 +42,7 @@ templ header(player types.User, score types.Ext_ScoreData){
             { score.Version } by { score.Creator } </a>
 
             <p class={ "absolute bottom-0 right-0 rounded-lg m-3 p-1 " + theme(ctx).Dark }>
-            { player.Username } at { score.Date }</p>
+            { player(ctx).User.Username } at { score.Date }</p>
 
                 <button id="playButton" class={ "absolute left-2 top-52 text--pink hover:text-white " + theme(ctx).Dark }>
                     <i class="fas fa-play"></i>
@@ -59,7 +59,7 @@ templ header(player types.User, score types.Ext_ScoreData){
     </div>
 }
 
-templ attributes(player types.User, score types.Ext_ScoreData){
+templ attributes(score types.Ext_ScoreData){
     <div class={ "flex justify-evenly h-64 text-base " + theme(ctx).Medium_light }>
         <div class="flex flex-col justify-evenly">
             <div class="m-8">
@@ -71,7 +71,7 @@ templ attributes(player types.User, score types.Ext_ScoreData){
                 "OD", "text-white", F(score.Od),
                 "BPM", "text-white", F(score.Bpm),)
                 
-                @playercard(player){}
+                @playercard()
             </div>
 
         </div>
@@ -121,13 +121,13 @@ templ attElementList(values ...string){
     </div>
 }
 
-templ playercard(player types.User){
-                <a href={ templ.SafeURL("https://osu.ppy.sh/users/" + I(player.UserId)) } class="relative">
+templ playercard(){
+                <a href="/me" class="relative">
                     <div class="h-28 bg-center rounded-lg relative">
-                    <img class="bg-center" src={ player.Banner } style="width: 100%; height: 100%; object-fit: cover;" ></img>
+                    <img class="bg-center" src={ player(ctx).ApiUser.CoverURL } style="width: 100%; height: 100%; object-fit: cover;" ></img>
                         <div class="absolute inset-0 rounded-lg">
 
-                        <img src="https://a.ppy.sh/14100399?1672009368.jpeg" class={ "h-16 absolute rounded-lg top-2 left-2 " + theme(ctx).Dark }></img>
+                        <img src={ player(ctx).ApiUser.AvatarURL } class={ "h-16 absolute rounded-lg top-2 left-2 " + theme(ctx).Dark }></img>
                     </div>
                     <div class={ "absolute rounded-lg top-2 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>
                         <span class="fi fi-de"></span>
@@ -138,9 +138,8 @@ templ playercard(player types.User){
                         <i class="fas fa-heart"></i>
                         <i class="fas fa-heart"></i>
                         
-
                     </div>
-                    <div class={ "absolute rounded-lg top-10 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>JuLi0n_ </div>
+                    <div class={ "absolute rounded-lg top-10 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>{ player(ctx).User.Username } </div>
                         
                             <div class="absolute rounded-lg top-20 left-6">
                                 <svg width="30" height="30" xmlns="http://www.w3.org/2000/svg">

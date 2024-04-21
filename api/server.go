@@ -26,12 +26,12 @@ func (s *Server) Start() error {
 		logger.New(),
 	)
 
+	app.Use(CookieClicker)
 	app.Static("assets", "./static")
 
 	api := app.Group("/api")
 	api.Get("/scoresearch/*", s.ScoreSearch)
 
-	app.Use(CookieClicker)
 	app.Get("/", s.Index)
 
 	app.Get("/login", s.Login)

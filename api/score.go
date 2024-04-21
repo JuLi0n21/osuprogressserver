@@ -27,16 +27,8 @@ func (s *Server) ScorePage(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	}
 
-	player := types.User{
-		Username:    "JuLi0n_",
-		UserId:      14100399,
-		Banner:      "https://assets.ppy.sh/user-profile-covers/14100399/cd1600936d7a56115cd147f47169addcf8f812133861b667c7dd3d177ca5068d.jpeg",
-		Avatar:      "https://a.ppy.sh/14100399?1672009368.jpeg",
-		GlobalRank:  "57497",
-		LocalRank:   "2928",
-		Country:     "Germany",
-		Countrycode: "de",
-	}
+	fmt.Println(c.Locals("User").(types.UserContext).User.Username)
+	player := c.Locals("User").(types.UserContext)
 
 	if len(scores) == 0 {
 		return c.SendStatus(404)
@@ -51,10 +43,9 @@ func (s *Server) ScorePage(c *fiber.Ctx) error {
 	}
 
 	ctx := context.WithValue(context.Background(), "theme", themes)
+	ctx = context.WithValue(ctx, "player", player)
 
-	component := cmp.View_ScoreSite(player, scores)
-
-	component.Render(ctx, c.Context().Request.BodyWriter())
+	component := cmp.View_ScoreSite(scores)
 
 	handler := adaptor.HTTPHandler(C(templ.Handler(component), ctx))
 

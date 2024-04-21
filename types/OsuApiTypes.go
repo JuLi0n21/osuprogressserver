@@ -129,3 +129,9 @@ type ApiUser struct {
 		Data []int  `json:"data"`
 	} `json:"rank_history"`
 }
+
+type UserContext struct {
+	User     User
+	ApiUser  ApiUser
+	Cookieid string
+}

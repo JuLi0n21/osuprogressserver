@@ -11,7 +11,6 @@ import (
 	"os"
 	client "osuprogressserver/OsuApi"
 	"osuprogressserver/types"
-	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -27,13 +26,13 @@ func (s *Server) Oauth(c *fiber.Ctx) error {
 	redirecturi := os.Getenv("REDIRECT_URI")
 
 	CookieID := c.Cookies("session")
-	user, ok := UserSessions[CookieID]
+	userC, ok := UserSessions[CookieID]
 
 	if !ok {
 		return errors.New("Session not found")
 	}
 
-	if user.cookieid == state {
+	if userC.Cookieid == state {
 		fmt.Println("Sign in Success, Requesting Accesstoken")
 
 		body := url.Values{
@@ -107,16 +106,10 @@ func (s *Server) Oauth(c *fiber.Ctx) error {
 		}
 
 		newuser := types.User{
-			UserId:      apidata.ID,
-			Username:    apidata.Username,
-			Banner:      apidata.CoverURL,
-			Avatar:      apidata.AvatarURL,
-			GlobalRank:  strconv.Itoa(apidata.Statistics.Rank.Global),
-			LocalRank:   strconv.Itoa(apidata.Statistics.Rank.Country),
-			Country:     apidata.Country.Name,
-			Countrycode: apidata.Country.Code,
-			Mode:        apidata.Playmode,
-			Auth:        user.Auth,
+			UserId:   apidata.ID,
+			Username: apidata.Username,
+			Mode:     apidata.Playmode,
+			Auth:     user.Auth,
 		}
 
 		err = s.store.SaveUser(newuser)
@@ -124,9 +117,10 @@ func (s *Server) Oauth(c *fiber.Ctx) error {
 			return err
 		}
 
-		UserSessions[CookieID] = UserContext{
-			cookieid: CookieID,
+		UserSessions[CookieID] = types.UserContext{
 			User:     newuser,
+			ApiUser:  *apidata,
+			Cookieid: CookieID,
 		}
 	}
 

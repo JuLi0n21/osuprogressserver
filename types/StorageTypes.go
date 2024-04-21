@@ -71,14 +71,8 @@ type BanchoTime struct {
 }
 
 type User struct {
-	UserId      int
-	Username    string
-	Banner      string
-	Avatar      string
-	GlobalRank  string
-	LocalRank   string
-	Country     string
-	Countrycode string
-	Mode        string
-	Auth        AuthUser
+	UserId   int
+	Username string
+	Mode     string
+	Auth     AuthUser
 }

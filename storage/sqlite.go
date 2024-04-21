@@ -555,12 +555,6 @@ func createTables(db *sql.DB) {
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS Users (
 		Userid INTEGER NOT NULL PRIMARY KEY,
 		Username    TEXT,
-		Banner      TEXT,
-		Avatar      TEXT,
-		GlobalRank  TEXT,
-		LocalRank   TEXT,
-		Country     TEXT,
-		Countrycode TEXT,
 		Mode		TEXT,
 		Tokentype TEXT,
 		Expiresin INTEGER,

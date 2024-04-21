@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"osuprogressserver/cmp"
 	"osuprogressserver/types"
@@ -12,16 +13,8 @@ import (
 
 func (s *Server) Userpage(c *fiber.Ctx) error {
 	//todo
-	player := types.User{
-		Username:    "JuLi0n_",
-		UserId:      14100399,
-		Banner:      "https://assets.ppy.sh/user-profile-covers/14100399/cd1600936d7a56115cd147f47169addcf8f812133861b667c7dd3d177ca5068d.jpeg",
-		Avatar:      "https://a.ppy.sh/14100399?1672009368.jpeg",
-		GlobalRank:  "57497",
-		LocalRank:   "2928",
-		Country:     "Germany",
-		Countrycode: "de",
-	}
+	player := c.Locals("User").(types.UserContext)
+	fmt.Println(player.User.Username)
 
 	stats := types.Stats{
 		Time:   "9h",
@@ -96,9 +89,11 @@ func (s *Server) Userpage(c *fiber.Ctx) error {
 		fmt.Println(err)
 	}
 
-	component := cmp.View_Userpage(player, stats, scores)
+	ctx := context.WithValue(context.Background(), "player", player)
 
-	handler := adaptor.HTTPHandler(templ.Handler(component))
+	component := cmp.View_Userpage(stats, scores)
+
+	handler := adaptor.HTTPHandler(C(templ.Handler(component), ctx))
 
 	return handler(c)
 }

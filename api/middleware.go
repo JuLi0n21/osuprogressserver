@@ -11,12 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type UserContext struct {
-	User     types.User
-	cookieid string
-}
-
-var UserSessions = map[string]UserContext{}
+var UserSessions = map[string]types.UserContext{}
 
 func CookieClicker(c *fiber.Ctx) error {
 
@@ -26,15 +21,16 @@ func CookieClicker(c *fiber.Ctx) error {
 	if !ok {
 		slog.Log(c.Context(), slog.LevelInfo, "New Session Created")
 		cookie := generateUserID(56)
-		user = UserContext{
+		user = types.UserContext{
 			User:     types.User{},
-			cookieid: cookie,
+			ApiUser:  types.ApiUser{},
+			Cookieid: cookie,
 		}
 
 		UserSessions[cookie] = user
 		c.Cookie(&fiber.Cookie{
 			Name:        "session",
-			Value:       user.cookieid,
+			Value:       user.Cookieid,
 			HTTPOnly:    true,
 			Expires:     time.Now().AddDate(1, 0, 0),
 			Path:        "/",
@@ -44,17 +40,14 @@ func CookieClicker(c *fiber.Ctx) error {
 		})
 	}
 
-	c.Locals("userid", user.User.UserId)
+	c.Locals("User", user)
 
 	return c.Next()
 }
 
 func Authorization(c *fiber.Ctx) error {
 
-	uid := c.Locals("userid").(int)
-
-	if uid == 0 {
-
+	if c.Locals("User").(types.UserContext).User.UserId == 0 {
 		return c.Redirect("/login")
 	}
 

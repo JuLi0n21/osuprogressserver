@@ -4,6 +4,7 @@ import "osuprogressserver/types"
 
 templ View_Index(scores []types.Ext_ScoreData) {
     @Head()
+    @FixedIcons()
     <body class={ "flex justify-center text-white " + theme(ctx).Dark }>
         @FixedIcons()
         <div class={ "h-max content rounded-lg " + theme(ctx).Medium_dark }>

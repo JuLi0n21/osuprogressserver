@@ -1,7 +1,9 @@
 package api
 
 import (
+	"context"
 	"osuprogressserver/cmp"
+	"osuprogressserver/types"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
@@ -17,7 +19,9 @@ func (s *Server) Index(c *fiber.Ctx) error {
 
 	component := cmp.View_Index(scores)
 
-	handler := adaptor.HTTPHandler(templ.Handler(component))
+	ctx := context.WithValue(context.Background(), "player", c.Locals("User").(types.UserContext))
+
+	handler := adaptor.HTTPHandler(C(templ.Handler(component), ctx))
 
 	return handler(c)
 }
