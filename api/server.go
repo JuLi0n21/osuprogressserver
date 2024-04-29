@@ -31,6 +31,8 @@ func (s *Server) Start() error {
 
 	api := app.Group("/api")
 	api.Get("/scoresearch/*", s.ScoreSearch)
+	api.Get("/score")
+	api.Post("/score")
 
 	app.Get("/", s.Index)
 

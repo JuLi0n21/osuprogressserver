@@ -75,3 +75,69 @@ func (s *Server) ScoreSearch(c *fiber.Ctx) error {
 
 	return handler(c)
 }
+
+func (s *Server) Score(c *fiber.Ctx) error {
+
+	if t := c.GetReqHeaders()["Authorization"]; len(t) == 0 {
+		return c.SendStatus(401)
+	}
+
+	var apiscore types.ApiScore
+
+	if err := c.BodyParser(&apiscore); err != nil {
+		return err
+	}
+
+	score := types.Ext_ScoreData{
+		ScoreData: types.ScoreData{
+			Title:       apiscore.Title,
+			Date:        apiscore.Date,
+			Playtype:    apiscore.PlayType,
+			BeatmapID:   apiscore.BeatmapID,
+			Ar:          apiscore.AR,
+			Cs:          apiscore.CS,
+			Hp:          apiscore.HP,
+			Od:          apiscore.OD,
+			SR:          apiscore.SR,
+			Bpm:         apiscore.BPM,
+			Userid:      apiscore.Username,
+			ACC:         apiscore.ACC,
+			Score:       apiscore.Score,
+			Combo:       apiscore.Combo,
+			Hit50:       apiscore.Hit50,
+			Hit100:      apiscore.Hit100,
+			Hit300:      apiscore.Hit300,
+			Ur:          apiscore.UR,
+			HitMiss:     apiscore.HitMiss,
+			Mode:        apiscore.Mode,
+			Mods:        apiscore.Mods,
+			Time:        apiscore.Time,
+			PP:          apiscore.PP,
+			AIM:         apiscore.AIM,
+			SPEED:       apiscore.SPEED,
+			ACCURACYATT: apiscore.AccuracyAtt,
+			Grade:       apiscore.Grade,
+			FCPP:        apiscore.FCPP,
+		},
+		Beatmap: types.Beatmap{
+			BeatmapID:    apiscore.BeatmapID,
+			BeatmapSetID: apiscore.BeatmapSetID,
+			Maxcombo:     apiscore.MaxCombo,
+			Version:      apiscore.Version,
+		},
+		BeatmapSet: types.BeatmapSet{
+			BeatmapSetID: apiscore.BeatmapSetID,
+			Artist:       apiscore.Artist,
+			Creator:      apiscore.Creator,
+			Tags:         apiscore.Tags,
+			CoverList:    apiscore.CoverList,
+			Cover:        apiscore.Cover,
+			Preview:      apiscore.Preview,
+			Rankedstatus: apiscore.Status,
+		},
+	}
+
+	s.store.SaveExtendedScore(score)
+
+	return c.SendStatus(200)
+}
