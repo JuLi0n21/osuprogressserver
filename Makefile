@@ -1,5 +1,5 @@
 build:
-	@air & templ generate -watch
+	@air 
 
 style:
 	@npx tailwindcss -i ./static/input.css -o ./static/style.css --watch

@@ -17,7 +17,7 @@ func main() {
 		panic("uhh no .env")
 	}
 
-	port := flag.String("port", ":3000", "Serverport")
+	port := flag.String("port", ":4000", "Serverport")
 	flag.Parse()
 	storage, err := storage.NewSQLite("Sqlite.db")
 	if err != nil {

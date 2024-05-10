@@ -3,6 +3,7 @@ package api
 import (
 	"osuprogressserver/storage"
 
+	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
@@ -22,6 +23,10 @@ func NewServer(port string, store storage.Storage) *Server {
 func (s *Server) Start() error {
 	app := fiber.New()
 
+	prometheus := fiberprometheus.New("Osu!Progress")
+	prometheus.RegisterAt(app, "/metrics")
+	app.Use(prometheus.Middleware)
+
 	app.Use(
 		logger.New(),
 	)
@@ -31,8 +36,8 @@ func (s *Server) Start() error {
 
 	api := app.Group("/api")
 	api.Get("/scoresearch/*", s.ScoreSearch)
-	api.Get("/score")
-	api.Post("/score")
+	api.Get("/score", s.Score)
+	api.Post("/score", s.Score)
 
 	app.Get("/", s.Index)
 
@@ -42,7 +47,7 @@ func (s *Server) Start() error {
 	oauth.Get("/code", s.Oauth)
 	oauth.Get("/token", s.OauthAccess)
 
-	app.Use(Authorization)
+	//app.Use(Authorization)
 	app.Get("/me", s.Userpage)
 	app.Get("/score/:id", s.ScorePage)
 
