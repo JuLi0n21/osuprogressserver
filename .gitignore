@@ -9,6 +9,5 @@ tmp/
 osuprogressserver
 node_modules/
 package-lock.js
-package.js
 style.css
 .ENV
