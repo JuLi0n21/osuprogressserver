@@ -7,7 +7,7 @@ templ View_Userpage(stats types.Stats, scores []types.Ext_ScoreData) {
     <body class={ "flex justify-center text-white " + theme(ctx).Dark }>
         @FixedIcons()
         <div class={ "h-max content rounded-lg " + theme(ctx).Medium_dark }>
-            <h1 class="flex justify-center">Osu Progress</h1>
+            <h1 class="flex justify-center p-4 m-2 ">Osu Progress</h1>
             @Header(stats)
             @Spacer()
             @ScoreSearch(scores, 10, len(scores))

@@ -44,11 +44,8 @@ type ApiUser struct {
 	Title        any      `json:"title"`
 	Twitter      string   `json:"twitter"`
 	Website      string   `json:"website"`
-	Country      struct {
-		Code string `json:"code"`
-		Name string `json:"name"`
-	} `json:"country"`
-	Cover struct {
+	Country      Country  `json:"country"`
+	Cover        struct {
 		CustomURL string `json:"custom_url"`
 		URL       string `json:"url"`
 		ID        any    `json:"id"`
@@ -128,6 +125,11 @@ type ApiUser struct {
 		Mode string `json:"mode"`
 		Data []int  `json:"data"`
 	} `json:"rank_history"`
+}
+
+type Country struct {
+	Code string `json:"code"`
+	Name string `json:"name"`
 }
 
 type UserContext struct {

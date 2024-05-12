@@ -5,21 +5,11 @@ import (
 	"log/slog"
 	"math/rand"
 	"net/http"
+	"osuprogressserver/cmp"
 	"osuprogressserver/types"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/prometheus/client_golang/prometheus"
-)
-
-var (
-	requestsTotal = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "Requests",
-			Help: "Total amount of Requests",
-		},
-		[]string{"method", "route", "status"},
-	)
 )
 
 var UserSessions = map[string]types.UserContext{}
@@ -33,8 +23,8 @@ func CookieClicker(c *fiber.Ctx) error {
 		slog.Log(c.Context(), slog.LevelInfo, "New Session Created")
 		cookie := generateUserID(56)
 		user = types.UserContext{
-			User:     types.User{},
-			ApiUser:  types.ApiUser{},
+			User:     cmp.DefaultUser().User,
+			ApiUser:  cmp.DefaultUser().ApiUser,
 			Cookieid: cookie,
 		}
 
@@ -64,16 +54,6 @@ func Authorization(c *fiber.Ctx) error {
 
 	return c.Next()
 
-}
-
-func Metrics(c *fiber.Ctx) error {
-	if err := c.Next(); err != nil {
-		return err
-	}
-
-	requestsTotal.WithLabelValues(c.Method(), c.Path(), string(c.Response().Header.StatusMessage()))
-
-	return nil
 }
 
 func generateUserID(length int) string {

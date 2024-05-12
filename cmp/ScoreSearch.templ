@@ -13,15 +13,26 @@ templ ScoreSearch(scores []types.Ext_ScoreData, limit int, offset int){
    hx-indicator="#spinner"
    onkeydown="if (event.key === 'Enter') event.preventDefault();"> 
     <h1>Scores</h1>
-        <div class="flex justify-around rounded-lg text--yellow space-x-2">
+        <div class="flex justify-around rounded-lg text--yellow space-x-2 mr-2 ml-2">
             <button class={ "border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 " + theme(ctx).Dark } type="button" >Fcable</button>
             <button class={ "border border:yellow rounded-lg p-2 mt-2 mb-2 hover:border-pink-500 " + theme(ctx).Dark } type="button" >Recent</button>
             <img src="/assets/img/loading.gif" id="spinner" class="htmx-indicator max-w-[50px] max-h-[60px] "></img>
             <input id="query" name="query" class={"flex-1 border border:yellow rounded-lg p-2 mt-2 mb-2 focus:outline-none focus:border-pink-500 hover:border-pink-500 " + theme(ctx).Dark } type="text" placeholder="Type to Search..."></input>
-            <input id="from" name="from" class={"w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 focus:outline-none focus:border-pink-500 hover:border-pink-500 " + theme(ctx).Dark } type="Date"></input>
-            <input id="to" name="to" class={"w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 focus:outline-none focus:border-pink-500 hover:border-pink-500 " + theme(ctx).Dark } type="Date"></input>
+            <input id="from" name="from" class={"w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 focus:outline-none text-center focus:border-pink-500 hover:border-pink-500 " + theme(ctx).Dark } type="Date"></input>
+            <input id="to" name="to" class={"w-1/6 border border:yellow rounded-lg p-2 mt-2 mb-2 focus:outline-none text-center focus:border-pink-500 hover:border-pink-500 " + theme(ctx).Dark } type="Date"></input>
         </div>
     </form>
+    <script> 
+        flatpickr("#from", { 
+            dateFormat: "H:i d/m/Y",
+        });
+
+         flatpickr("#to", {
+            enableTime: true,
+            dateFormat: "H:i d/m/Y",
+            defaultDate: new Date(),
+        });
+    </script>
     }
     @ScoreContainer(scores, limit, offset)
     

@@ -12,18 +12,21 @@ templ View_ScoreSite(scores []types.Ext_ScoreData){
         <div id="ScoreData">
         @header(scores[0])
         @attributes(scores[0])
-        @Spacer()
+        </div>
         @progress(scores[0])
         @Spacer()
         @ScoreSearch(scores, 10, len(scores))
-        </div>
         </div>
     </body>
 }
 
 templ header(score types.Ext_ScoreData){
     <div class="relative">
-     <p class="absolute top-0 left-6">{ score.Rankedstatus }</p>
+     <p class="absolute top-2 left-6">{ score.Rankedstatus }</p>
+     <button>
+        <i class="absolute top-2 right-6 fa fa-link text--pink hover:text-white"></i>
+     </button>
+
         <div class="flex justify-around m-4 text-xl"> 
             <h2 class="self-center">{ score.Title } ({ score.Version})</h2>
         </div>
@@ -44,16 +47,38 @@ templ header(score types.Ext_ScoreData){
             <p class={ "absolute bottom-0 right-0 rounded-lg m-3 p-1 " + theme(ctx).Dark }>
             { player(ctx).User.Username } at { score.Date }</p>
 
-                <button id="playButton" class={ "absolute left-2 top-52 text--pink hover:text-white " + theme(ctx).Dark }>
+                <button id="playButton" class={ "absolute left-2 top-52 text--pink hover:text-white rounded-full p-4 text-2xl " + theme(ctx).Dark }>
                     <i class="fas fa-play"></i>
                 </button>
-                <audio id="audioPlayer">
-                    
-                    <source src="https://b.ppy.sh/preview/1208907.mp3" type="audio/mpeg"></source>
-                    
+                <audio id="audioPlayer" src={ score.Preview }>
                     Your browser does not support the audio element.
                 </audio>
                 <input class={ "absolute left-0 top-72 cursor-pointer accent-pink-500 text--pink hover:accent-white " + theme(ctx).Dark } type="range" id="volumeSlider" min="0" max="1" value="0.2" step="0.001" oninput="updateVolume()" style="width: 80px;"></input>
+                <script>
+                    const audioPlayer = document.getElementById("audioPlayer");
+
+                    function updateVolume() {
+                        var volumeSlider = document.getElementById('volumeSlider');
+
+                        audioPlayer.volume = volumeSlider.value;
+                    }
+
+                    const playButton = document.getElementById("playButton");
+        
+                    playButton.addEventListener("click", function () {
+                        event.preventDefault();
+                        
+                        if (audioPlayer.paused) {
+                                audioPlayer.play();
+                            playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                        } else {
+                            audioPlayer.pause();
+                            audioPlayer.currentTime = 0;
+                            playButton.innerHTML = '<i class="fas fa-play"></i>';
+                        }
+                    });
+                </script>
+
         </div>
    
     </div>
@@ -124,39 +149,61 @@ templ attElementList(values ...string){
 templ playercard(){
                 <a href="/me" class="relative">
                     <div class="h-28 bg-center rounded-lg relative">
-                    <img class="bg-center" src={ player(ctx).ApiUser.CoverURL } style="width: 100%; height: 100%; object-fit: cover;" ></img>
+                    <img class="bg-center" src={ player(ctx).ApiUser.CoverURL } style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5;" ></img>
                         <div class="absolute inset-0 rounded-lg">
 
                         <img src={ player(ctx).ApiUser.AvatarURL } class={ "h-16 absolute rounded-lg top-2 left-2 " + theme(ctx).Dark }></img>
                     </div>
                     <div class={ "absolute rounded-lg top-2 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>
-                        <span class="fi fi-de"></span>
+                        <span class={ "fi fi-" + player(ctx).ApiUser.Country.Code }></span>
                     </div>
-                    <div class={ "absolute rounded-lg top-2 left-32 text--pink text-white pl-2 pr-2" + theme(ctx).Dark }>
-                        
+                    <div class={ "absolute rounded-lg top-2 left-32 text--pink text-white pl-2 pr-2 " + theme(ctx).Dark }>
+                        for range player(ctx).ApiUser.SupportLevel  {
                         <i class="fas fa-heart"></i>
-                        <i class="fas fa-heart"></i>
-                        <i class="fas fa-heart"></i>
+                    }
                         
                     </div>
                     <div class={ "absolute rounded-lg top-10 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>{ player(ctx).User.Username } </div>
                         
                             <div class="absolute rounded-lg top-20 left-6">
-                                <svg width="30" height="30" xmlns="http://www.w3.org/2000/svg">
-    
+
+                            <svg width="30" height="30" xmlns="http://www.w3.org/2000/svg">
+                                    
                                 <circle cx="15" cy="15" r="13" fill="transparent" stroke="white" stroke-width="1"></circle>
                                 <circle cx="15" cy="15" r="8" fill="transparent" stroke="white" stroke-width="1"></circle>
-                                <circle cx="15" cy="15" r="10" fill="transparent" stroke="green" stroke-width="4"></circle>
+                            
+                                if player(ctx).ApiUser.IsActive && player(ctx).ApiUser.IsOnline {
+                                    <circle cx="15" cy="15" r="10" fill="transparent" stroke="green" stroke-width="4"></circle>
+                                } else if !player(ctx).ApiUser.IsActive && player(ctx).ApiUser.IsOnline {
+                                    <circle cx="15" cy="15" r="10" fill="transparent" stroke="orange" stroke-width="4"></circle>
+                                } else if !player(ctx).ApiUser.IsActive && !player(ctx).ApiUser.IsOnline {
+                                    <circle cx="15" cy="15" r="10" fill="transparent" stroke="gray" stroke-width="4"></circle>
+                                } else if player(ctx).ApiUser.IsActive && !player(ctx).ApiUser.IsOnline {
+                                    <circle cx="15" cy="15" r="10" fill="transparent" stroke="blue" stroke-width="4"></circle>
+                                }
+                           
                             </svg> 
                         </div>
                     
-                    
-
-                    <div class={" absolute rounded-lg top-20 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>Online</div>
+                    <div class={" absolute rounded-lg top-20 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>
+                        
+                            if player(ctx).ApiUser.IsActive && player(ctx).ApiUser.IsOnline {
+                                Online
+                            } else if !player(ctx).ApiUser.IsActive && player(ctx).ApiUser.IsOnline { 
+                                Away
+                            } else if !player(ctx).ApiUser.IsActive && !player(ctx).ApiUser.IsOnline { 
+                                Offline
+                            } else if player(ctx).ApiUser.IsActive && !player(ctx).ApiUser.IsOnline { 
+                                Active
+                            }
+                    </div>
                         </div>
                 </a>
 }
 
 templ progress(scores types.Ext_ScoreData){
+<div class="text-center" > 
+    <h1> Progress </h1>
     <div>{ scores.Title }</div>
+</div>
 }

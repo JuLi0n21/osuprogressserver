@@ -2,6 +2,8 @@ package cmp
 
 import (
 	"context"
+	"fmt"
+	"math/rand"
 	"osuprogressserver/types"
 	"strconv"
 )
@@ -25,7 +27,7 @@ func player(ctx context.Context) types.UserContext {
 	if userc, ok := ctx.Value("player").(types.UserContext); ok {
 		return userc
 	}
-	return types.UserContext{}
+	return DefaultUser()
 }
 
 func DefaultTheme() types.Theme {
@@ -35,5 +37,27 @@ func DefaultTheme() types.Theme {
 		Medium:       "backdrop--medium",
 		Medium_light: "backdrop--medium--light",
 		Light:        "backdrop--light",
+	}
+}
+
+func DefaultUser() types.UserContext {
+
+	return types.UserContext{
+		ApiUser: types.ApiUser{
+			Username:  "User",
+			AvatarURL: "https://osu.ppy.sh/images/layout/avatar-guest.png",
+			CoverURL:  fmt.Sprintf("https://osu.ppy.sh/images/headers/profile-covers/c%d.jpg", (rand.Intn(7) + 1)),
+
+			Country: types.Country{
+				Code: "xx",
+				Name: "Unknown",
+			},
+			IsActive: false,
+			IsOnline: false,
+		},
+		User: types.User{
+			Username: "User",
+			UserId:   0,
+		},
 	}
 }
