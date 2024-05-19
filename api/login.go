@@ -31,9 +31,10 @@ func (s *Server) Login(c *fiber.Ctx) error {
 	var clientid = os.Getenv("CLIENT_ID")
 
 	CookieID := c.Cookies("session")
-	user, ok := UserSessions[CookieID]
 
-	if !ok {
+	user, err := UserSessions.Read(CookieID)
+
+	if err != nil {
 		return c.Redirect("/")
 	}
 

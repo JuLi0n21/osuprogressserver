@@ -3,9 +3,9 @@ package api
 import (
 	"osuprogressserver/storage"
 
-	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	//	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 type Server struct {
@@ -23,9 +23,9 @@ func NewServer(port string, store storage.Storage) *Server {
 func (s *Server) Start() error {
 	app := fiber.New()
 
-	prometheus := fiberprometheus.New("Osu!Progress")
-	prometheus.RegisterAt(app, "/metrics")
-	app.Use(prometheus.Middleware)
+	//prometheus := fiberprometheus.New("Osu!Progress")
+	//prometheus.RegisterAt(app, "/metrics")
+	//app.Use(prometheus.Middleware)
 
 	app.Use(
 		logger.New(),

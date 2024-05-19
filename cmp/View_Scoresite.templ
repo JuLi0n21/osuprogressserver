@@ -34,11 +34,13 @@ templ header(score types.Ext_ScoreData){
                 <a href={ templ.SafeURL("https://osu.ppy.sh/beatmapsets/" +strconv.Itoa(score.Beatmap.BeatmapID)+"#"+strconv.Itoa(score.Mode)) } target="_blank">
                     <img src={ score.Cover } style="min-height: 280px; min-width: 1000px; max-height: 280px; object-fit: cover"></img>
                 </a>
-                <img src={ Img(score.Grade) } alt={ score.Grade} class="absolute w-1/5 top-0 left-0 " loading="lazy"></img>
+ <img src={ Img(score.Grade) } alt={ score.Grade} class="absolute w-1/5 top-0 left-0 " loading="lazy"></img>
         
             <div class="absolute flex top-0 right-0">
                     for _, mod := range strings.Split(score.Mods, ",") {
+                    if mod != "" {
                         <img class="" src={Img(mod)} alt={mod} style="height: 50px"></img>
+                        }
                     }
             </div>
             <a href={ templ.SafeURL("https://osu.ppy.sh/users/"+score.Creator)} class={ "absolute bottom-10 right-0 rounded-lg m-3 p-1 text--pink hover:text-white " + theme(ctx).Dark }>

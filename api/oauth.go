@@ -26,9 +26,9 @@ func (s *Server) Oauth(c *fiber.Ctx) error {
 	redirecturi := os.Getenv("REDIRECT_URI")
 
 	CookieID := c.Cookies("session")
-	userC, ok := UserSessions[CookieID]
+	userC, err := UserSessions.Read(CookieID)
 
-	if !ok {
+	if err != nil {
 		return errors.New("Session not found")
 	}
 
@@ -116,12 +116,11 @@ func (s *Server) Oauth(c *fiber.Ctx) error {
 		if err != nil {
 			return err
 		}
-
-		UserSessions[CookieID] = types.UserContext{
+		UserSessions.Write(CookieID, types.UserContext{
 			User:     newuser,
 			ApiUser:  *apidata,
 			Cookieid: CookieID,
-		}
+		})
 	}
 
 	c.Redirect("/me")

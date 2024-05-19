@@ -24,6 +24,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	storage.MockScores(100)
 	s := api.NewServer(*port, storage)
 
 	fmt.Println("Webserver Running at", *port)

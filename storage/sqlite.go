@@ -6,6 +6,7 @@ import (
 	"log"
 	"osuprogressserver/types"
 
+	"github.com/brianvoe/gofakeit/v7"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -569,4 +570,78 @@ func createTables(db *sql.DB) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (s *SQLite) MockScores(length int) error {
+
+	for i := range length {
+
+		beatmapid := gofakeit.Int()
+		beatmapsetid := gofakeit.IntN(1000000)
+		fcpp := gofakeit.Float64Range(50, 800)
+		maxcombo := gofakeit.IntRange(200, 1000)
+
+		scoreData := types.ScoreData{
+			ScoreId:     fmt.Sprint(gofakeit.Int() + i),
+			Title:       gofakeit.BeerName(),
+			Date:        fmt.Sprint(gofakeit.PastDate()),
+			BeatmapID:   beatmapid,
+			Playtype:    gofakeit.RandomString([]string{"Standard", "Taiko", "Catch the Beat", "Mania"}),
+			Ar:          gofakeit.Float64Range(7, 10),
+			Cs:          gofakeit.Float64Range(2.5, 6.5),
+			Hp:          gofakeit.Float64Range(7, 10),
+			Od:          gofakeit.Float64Range(7, 10),
+			SR:          gofakeit.Float64Range(2, 10),
+			Bpm:         gofakeit.Float64Range(50, 280),
+			Userid:      gofakeit.RandomInt([]int{14100399, 3442200, 2, 23232323, 1000000}),
+			ACC:         gofakeit.Float64Range(7, 10),
+			Score:       gofakeit.Int(),
+			Combo:       gofakeit.IntRange(10, maxcombo),
+			Hit50:       gofakeit.IntN(15),
+			Hit100:      gofakeit.IntN(200),
+			Hit300:      gofakeit.IntRange(300, 3000),
+			Ur:          gofakeit.Float64Range(80, 150),
+			HitMiss:     gofakeit.IntN(10),
+			Mode:        gofakeit.Number(0, 3),
+			Mods:        gofakeit.RandomString([]string{"", "", "", "", "", "", "hd,hr", "dt,hd", "hd", "hr", "dt", "ez", "ht", "nc", "nf", "fl"}),
+			Time:        gofakeit.Number(60, 300),
+			PP:          gofakeit.Float64Range(0, fcpp),
+			AIM:         gofakeit.Float64Range(80, 100),
+			SPEED:       gofakeit.Float64Range(80, 100),
+			ACCURACYATT: gofakeit.Float64Range(80, 100),
+			Grade:       gofakeit.RandomString([]string{"SS", "S", "A", "B", "C", "D"}),
+			FCPP:        fcpp,
+		}
+
+		beatmap := types.Beatmap{
+			BeatmapID:    beatmapid,
+			BeatmapSetID: beatmapsetid,
+			Maxcombo:     maxcombo,
+			Version:      gofakeit.RandomString([]string{"Easy", "Normal", "Hard", "Expert"}),
+		}
+
+		// Generate random data for BeatmapSet
+		beatmapSet := types.BeatmapSet{
+			BeatmapSetID: beatmapsetid,
+			Artist:       gofakeit.Name(),
+			Creator:      gofakeit.Name(),
+			Tags:         gofakeit.RandomString([]string{"music", "game", "fun"}),
+			CoverList:    gofakeit.RandomString([]string{"https://assets.ppy.sh/beatmaps/1800953/covers/list@2x.jpg?1686054624", "https://assets.ppy.sh/beatmaps/628368/covers/cover@2x.jpg?1650651127"}),
+			Cover:        gofakeit.RandomString([]string{"https://assets.ppy.sh/beatmaps/1800953/covers/cover@2x.jpg?1686054624", "https://assets.ppy.sh/beatmaps/628368/covers/cover@2x.jpg?1650651127", "https://assets.ppy.sh/beatmaps/1895624/covers/cover@2x.jpg?1672353044", "https://assets.ppy.sh/beatmaps/426890/covers/cover@2x.jpg?1683195501", "https://assets.ppy.sh/beatmaps/1174754/covers/cover@2x.jpg?1650697061"}),
+			Preview:      gofakeit.RandomString([]string{"https://b.ppy.sh/preview/628368.mp3", "https://b.ppy.sh/preview/1800953.mp3"}),
+			Rankedstatus: gofakeit.RandomString([]string{"Ranked", "Approved", "Qualified", "Pending"}),
+		}
+
+		// Compose them into an instance of ExtScoreData
+		extScoreData := types.Ext_ScoreData{
+			ScoreData:  scoreData,
+			Beatmap:    beatmap,
+			BeatmapSet: beatmapSet,
+		}
+
+		//		fmt.Println(extScoreData)
+		s.SaveExtendedScore(extScoreData)
+	}
+
+	return nil
 }

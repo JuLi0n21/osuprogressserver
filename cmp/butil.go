@@ -13,7 +13,7 @@ func I(num int) string {
 }
 
 func F(num float64) string {
-	return strconv.FormatFloat(num, 'f', -1, 64)
+	return strconv.FormatFloat(num, 'f', 2, 64)
 }
 
 func theme(ctx context.Context) types.Theme {

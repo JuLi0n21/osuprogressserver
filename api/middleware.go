@@ -12,14 +12,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-var UserSessions = map[string]types.UserContext{}
+var (
+	UserSessions = types.NewUserSessionMap()
+)
 
 func CookieClicker(c *fiber.Ctx) error {
 
 	CookieID := c.Cookies("session")
-	user, ok := UserSessions[CookieID]
 
-	if !ok {
+	user, err := UserSessions.Read(CookieID)
+
+	if err != nil {
 		slog.Log(c.Context(), slog.LevelInfo, "New Session Created")
 		cookie := generateUserID(56)
 		user = types.UserContext{
@@ -28,7 +31,8 @@ func CookieClicker(c *fiber.Ctx) error {
 			Cookieid: cookie,
 		}
 
-		UserSessions[cookie] = user
+		UserSessions.Write(CookieID, user)
+
 		c.Cookie(&fiber.Cookie{
 			Name:        "session",
 			Value:       user.Cookieid,
@@ -40,7 +44,6 @@ func CookieClicker(c *fiber.Ctx) error {
 			SameSite:    "None",
 		})
 	}
-
 	c.Locals("User", user)
 
 	return c.Next()

@@ -2,7 +2,7 @@ package cmp
 
 import "osuprogressserver/types"
 
-templ View_Userpage(stats types.Stats, scores []types.Ext_ScoreData) {
+templ View_Userpage(stats types.Stats) {
     @Head()
     <body class={ "flex justify-center text-white " + theme(ctx).Dark }>
         @FixedIcons()
@@ -10,7 +10,7 @@ templ View_Userpage(stats types.Stats, scores []types.Ext_ScoreData) {
             <h1 class="flex justify-center p-4 m-2 ">Osu Progress</h1>
             @Header(stats)
             @Spacer()
-            @ScoreSearch(scores, 10, len(scores))
+            @ScoreSearch([]types.Ext_ScoreData{}, 10, 0)
             @Spacer()
         </div>
     </body>

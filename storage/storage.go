@@ -38,4 +38,6 @@ type Storage interface {
 	SaveBanchoTime(types.BanchoTime) error
 
 	SaveScreenTime(types.ScreenTime) error
+
+	MockScores(int) error
 }
