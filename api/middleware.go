@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"log/slog"
+//	"log/slog"
 	"math/rand"
 	"net/http"
 	"osuprogressserver/cmp"
@@ -23,7 +23,7 @@ func CookieClicker(c *fiber.Ctx) error {
 	user, err := UserSessions.Read(CookieID)
 
 	if err != nil {
-		slog.Log(c.Context(), slog.LevelInfo, "New Session Created")
+//		slog.Log(c.Context(), slog.LevelInfo, "New Session Created")
 		cookie := generateUserID(56)
 		user = types.UserContext{
 			User:     cmp.DefaultUser().User,

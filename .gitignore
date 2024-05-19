@@ -10,4 +10,5 @@ osuprogressserver
 node_modules/
 package-lock.js
 style.css
-.ENV
+*.ENV
+*.env

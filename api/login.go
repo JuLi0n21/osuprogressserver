@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"os"
 	"osuprogressserver/cmp"
 	"osuprogressserver/types"
@@ -20,7 +19,7 @@ var scopes = []string{
 
 func (s *Server) Login(c *fiber.Ctx) error {
 
-	fmt.Println(c.Locals("User").(types.UserContext).User.Username)
+	//fmt.Println(c.Locals("User").(types.UserContext).User.Username)
 
 	if c.Locals("User").(types.UserContext).User.UserId != 0 {
 		return c.Redirect("/me")
