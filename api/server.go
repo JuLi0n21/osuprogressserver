@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	//	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
@@ -27,9 +28,9 @@ func (s *Server) Start() error {
 	//prometheus.RegisterAt(app, "/metrics")
 	//app.Use(prometheus.Middleware)
 
-	app.Use(
-		logger.New(),
-	)
+	app.Use(logger.New())
+
+	app.Get("/metrics", monitor.New())
 
 	app.Use(CookieClicker)
 	app.Static("assets", "./static")
