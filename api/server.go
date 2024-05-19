@@ -49,6 +49,7 @@ func (s *Server) Start() error {
 
 	//app.Use(Authorization)
 	app.Get("/me", s.Userpage)
+	app.Get("/users/:id", s.Userpage)
 	app.Get("/score/:id", s.ScorePage)
 
 	return app.Listen(s.port)

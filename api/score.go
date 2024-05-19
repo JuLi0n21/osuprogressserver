@@ -27,7 +27,7 @@ func (s *Server) ScorePage(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	}
 
-	fmt.Println(c.Locals("User").(types.UserContext).User.Username)
+	//fmt.Println(c.Locals("User").(types.UserContext).User.Username)
 	player := c.Locals("User").(types.UserContext)
 
 	if len(scores) == 0 {

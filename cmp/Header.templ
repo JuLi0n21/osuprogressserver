@@ -2,19 +2,19 @@ package cmp
 
 import "osuprogressserver/types"
 
-templ Header(stats types.Stats) {
+templ Header(User types.ApiUser, stats types.Stats) {
 <div>
     <div style="background-size: cover; background-position: center center; height: 250px">
-      <img src={ player(ctx).ApiUser.CoverURL } alt="User Banner" style="width: 100%; height: 100%; object-fit: cover;"></img>
+      <img src={ User.CoverURL } alt="User Banner" style="width: 100%; height: 100%; object-fit: cover;"></img>
     </div> 
-        <a href={ templ.SafeURL("https://osu.ppy.sh/users/"+ I(player(ctx).User.UserId))  } class="left-12 inline-block rounded -top-12 relative max-h-0 h-0  hover:scale-105" target="_blank" rel="noopener noreferrer">
-            <img src={ player(ctx).ApiUser.AvatarURL } style="width:100px;" class=""></img>
+        <a href={ templ.SafeURL("https://osu.ppy.sh/users/"+ I(User.ID))  } class="left-12 inline-block rounded -top-12 relative max-h-0 h-0  hover:scale-105" target="_blank" rel="noopener noreferrer">
+            <img src={ User.AvatarURL } style="width:100px;" class=""></img>
         </a>
     <div class="flex justify-around">
         <div class="text-left pt-3 pb-3">
-            <p class="">{ player(ctx).User.Username }</p>
-            <p class="">#{ I(player(ctx).ApiUser.Statistics.GlobalRank) } (#{ I(player(ctx).ApiUser.Statistics.Rank.Country) })</p>
-            <p class=""><span class={"fi fi-" + player(ctx).ApiUser.Country.Code }></span>{ player(ctx).ApiUser.Country.Name }</p>
+            <p class="">{ User.Username }</p>
+            <p class="">#{ I(User.Statistics.GlobalRank) } (#{ I(User.Statistics.Rank.Country) })</p>
+            <p class=""><span class={"fi fi-" + User.Country.Code }></span>{ User.Country.Name }</p>
         </div>
         <div class="text-left pt-3 pb-3">
             <p class="">

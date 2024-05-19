@@ -1,7 +1,7 @@
 package types
 
 type ScoreData struct {
-	ScoreId     string `json:"id"`
+	ScoreId     string
 	Title       string
 	Date        string
 	BeatmapID   int
@@ -54,6 +54,7 @@ type Ext_ScoreData struct {
 	ScoreData
 	Beatmap
 	BeatmapSet
+	ApiUser
 }
 
 type ScreenTime struct {

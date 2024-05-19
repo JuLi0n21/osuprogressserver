@@ -2,9 +2,9 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"osuprogressserver/cmp"
 	"osuprogressserver/types"
+	"strconv"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
@@ -13,8 +13,36 @@ import (
 
 func (s *Server) Userpage(c *fiber.Ctx) error {
 	//todo
+
+	id := c.Params("id")
+
 	player := c.Locals("User").(types.UserContext)
-	fmt.Println(player.User.Username)
+	user := types.UserContext{}
+	if c.Path() == "/me" {
+		if player.User.UserId == 0 {
+			return c.Redirect("/login")
+		}
+		user = player
+
+	} else {
+
+		uid, err := strconv.Atoi(id)
+		if err != nil {
+			return c.SendStatus(404)
+		}
+
+		apiu, err := s.store.GetApiUser(uid)
+		if err != nil {
+			return c.SendStatus(404)
+		}
+
+		user.ApiUser = apiu
+		user.User = types.User{
+			Username: apiu.Username,
+			UserId:   apiu.ID,
+		}
+
+	}
 
 	stats := types.Stats{
 		Time:   "9h",
@@ -25,7 +53,7 @@ func (s *Server) Userpage(c *fiber.Ctx) error {
 
 	ctx := context.WithValue(context.Background(), "player", player)
 
-	component := cmp.View_Userpage(stats)
+	component := cmp.View_Userpage(user.ApiUser, stats)
 
 	handler := adaptor.HTTPHandler(C(templ.Handler(component), ctx))
 

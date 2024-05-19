@@ -18,13 +18,17 @@ func main() {
 	}
 
 	port := flag.String("port", ":4000", "Serverport")
+	mockdata := flag.Bool("mock", false, "Generate Fake Data on startup")
 	flag.Parse()
 	storage, err := storage.NewSQLite("Sqlite.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	storage.MockScores(100)
+	if *mockdata {
+		fmt.Println("Creating Fake Data")
+		storage.MockScores(100000)
+	}
 	s := api.NewServer(*port, storage)
 
 	fmt.Println("Webserver Running at", *port)

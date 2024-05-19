@@ -20,7 +20,7 @@ templ ScoreSearchItem(score types.Ext_ScoreData){
 
 		<div class="flex flex-col rounded justify-evenly w-full max-w-[400px]">
 			<div>
-				<p class="text-white whitespace-nowrap overflow-hidden">{ score.Title } by { score.Artist }</p>
+				<p class="text-white whitespace-nowrap overflow-hidden">{ score.ScoreData.Title } by { score.Artist }</p>
 			</div>
 			<div class="flex justify-between">
 				<p class="text-white whitespace-nowrap overflow-hidden">{ I(score.Score) } / { I(score.Combo) } ({ I(score.Maxcombo) }) </p>   
@@ -42,23 +42,23 @@ templ ScoreSearchItem(score types.Ext_ScoreData){
 		<div class="flex max-w-[120px]">
 			<div class="flex flex-col justify-evenly justify-self-end rounded w-1/4 ml-3">
 				<div>
-					<p class="text--yellow">93.48%</p>
+					<p class="text--yellow">{F(score.ACC)}%</p>
 				</div>
 				<div class="flex text-nowrap whitespace-nowrap">
-					<span class="text-blue-500 ">122
-					<span class="text-green-500 ">7
-					<span class="text--orange ">0
-					<span class="text-red-600 ">4
+					<span class="text-blue-500 ">{I(score.Hit300)}
+					<span class="text-green-500 ">{I(score.Hit100)}
+					<span class="text--orange ">{I(score.Hit50)}
+					<span class="text-red-600 ">{I(score.HitMiss)}
 				</span></span></span></span></div>
 			</div>
 		</div>
 
 		<div class={ "flex flex-col justify-evenly rounded w-1/6 max-w-[100px] " + theme(ctx).Medium_light }>
 			<div class="flex justify-center">
-				<p class="text--pink">6.29pp</p>
+				<p class="text--pink">{F(score.PP)}pp</p>
 			</div>
 			<div class="flex justify-center">
-				<p class="text--pink--dark justify-self-center">(23.06pp)</p>
+				<p class="text--pink--dark justify-self-center">({F(score.FCPP)}pp)</p>
 			</div>
 		</div>
 	</div>

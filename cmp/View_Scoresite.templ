@@ -4,59 +4,57 @@ import "osuprogressserver/types"
 import "strings"
 import "strconv"
 
-templ View_ScoreSite(scores []types.Ext_ScoreData){
-   @Head()
-    <body class={ "flex justify-center text-white " + theme(ctx).Dark }>
-     @FixedIcons()
-    <div class={ "content w-1/2 rounded-lg text-white " + theme(ctx).Dark }>
-        <div id="ScoreData">
-        @header(scores[0])
-        @attributes(scores[0])
-        </div>
-        @progress(scores[0])
-        @Spacer()
-        @ScoreSearch(scores, 10, len(scores))
-        </div>
-    </body>
+templ View_ScoreSite(scores []types.Ext_ScoreData) {
+	@Head()
+	<body class={ "flex justify-center text-white " + theme(ctx).Dark }>
+		@FixedIcons()
+		<div class={ "content w-1/2 rounded-lg text-white " + theme(ctx).Dark }>
+			<div id="ScoreData">
+				@header(scores[0])
+				@attributes(scores[0])
+			</div>
+			@progress(scores[0])
+			@Spacer()
+			@ScoreSearch(scores, 10, len(scores))
+		</div>
+	</body>
 }
 
-templ header(score types.Ext_ScoreData){
-    <div class="relative">
-     <p class="absolute top-2 left-6">{ score.Rankedstatus }</p>
-     <button>
-        <i class="absolute top-2 right-6 fa fa-link text--pink hover:text-white"></i>
-     </button>
-
-        <div class="flex justify-around m-4 text-xl"> 
-            <h2 class="self-center">{ score.Title } ({ score.Version})</h2>
-        </div>
-            <div id="image-container" style="min-height: 280px; min-width: 1000px; position: relative;">
-                <a href={ templ.SafeURL("https://osu.ppy.sh/beatmapsets/" +strconv.Itoa(score.Beatmap.BeatmapID)+"#"+strconv.Itoa(score.Mode)) } target="_blank">
-                    <img src={ score.Cover } style="min-height: 280px; min-width: 1000px; max-height: 280px; object-fit: cover"></img>
-                </a>
- <img src={ Img(score.Grade) } alt={ score.Grade} class="absolute w-1/5 top-0 left-0 " loading="lazy"></img>
-        
-            <div class="absolute flex top-0 right-0">
-                    for _, mod := range strings.Split(score.Mods, ",") {
-                    if mod != "" {
-                        <img class="" src={Img(mod)} alt={mod} style="height: 50px"></img>
-                        }
-                    }
-            </div>
-            <a href={ templ.SafeURL("https://osu.ppy.sh/users/"+score.Creator)} class={ "absolute bottom-10 right-0 rounded-lg m-3 p-1 text--pink hover:text-white " + theme(ctx).Dark }>
-            { score.Version } by { score.Creator } </a>
-
-            <p class={ "absolute bottom-0 right-0 rounded-lg m-3 p-1 " + theme(ctx).Dark }>
-            { player(ctx).User.Username } at { score.Date }</p>
-
-                <button id="playButton" class={ "absolute left-2 top-52 text--pink hover:text-white rounded-full p-4 text-2xl " + theme(ctx).Dark }>
-                    <i class="fas fa-play"></i>
-                </button>
-                <audio id="audioPlayer" src={ score.Preview }>
-                    Your browser does not support the audio element.
-                </audio>
-                <input class={ "absolute left-0 top-72 cursor-pointer accent-pink-500 text--pink hover:accent-white " + theme(ctx).Dark } type="range" id="volumeSlider" min="0" max="1" value="0.2" step="0.001" oninput="updateVolume()" style="width: 80px;"></input>
-                <script>
+templ header(score types.Ext_ScoreData) {
+	<div class="relative">
+		<p class="absolute top-2 left-6">{ score.Rankedstatus }</p>
+		<button>
+			<i class="absolute top-2 right-6 fa fa-link text--pink hover:text-white"></i>
+		</button>
+		<div class="flex justify-around m-4 text-xl">
+			<h2 class="self-center">{ score.ScoreData.Title } ({ score.Version })</h2>
+		</div>
+		<div id="image-container" style="min-height: 280px; min-width: 1000px; position: relative;">
+			<a href={ templ.SafeURL("https://osu.ppy.sh/beatmapsets/" + strconv.Itoa(score.Beatmap.BeatmapID) + "#" + strconv.Itoa(score.Mode)) } target="_blank">
+				<img src={ score.BeatmapSet.Cover } style="min-height: 280px; min-width: 1000px; max-height: 280px; object-fit: cover"/>
+			</a>
+			<img src={ Img(score.Grade) } alt={ score.Grade } class="absolute w-1/5 top-0 left-0 " loading="lazy"/>
+			<div class="absolute flex top-0 right-0">
+				for _, mod := range strings.Split(score.Mods, ",") {
+					if mod != "" {
+						<img class="" src={ Img(mod) } alt={ mod } style="height: 50px"/>
+					}
+				}
+			</div>
+			<a href={ templ.SafeURL("https://osu.ppy.sh/users/" + score.Creator) } class={ "absolute bottom-10 right-0 rounded-lg m-3 p-1 text--pink hover:text-white " + theme(ctx).Dark }>
+				{ score.Version } by { score.Creator }
+			</a>
+			<p class={ "absolute bottom-0 right-0 rounded-lg m-3 p-1 " + theme(ctx).Dark }>
+				{ player(ctx).User.Username } at { score.Date }
+			</p>
+			<button id="playButton" class={ "absolute left-2 top-52 text--pink hover:text-white rounded-full p-4 text-2xl " + theme(ctx).Dark }>
+				<i class="fas fa-play"></i>
+			</button>
+			<audio id="audioPlayer" src={ score.Preview }>
+				Your browser does not support the audio element.
+			</audio>
+			<input class={ "absolute left-0 top-72 cursor-pointer accent-pink-500 text--pink hover:accent-white " + theme(ctx).Dark } type="range" id="volumeSlider" min="0" max="1" value="0.2" step="0.001" oninput="updateVolume()" style="width: 80px;"/>
+			<script>
                     const audioPlayer = document.getElementById("audioPlayer");
 
                     function updateVolume() {
@@ -80,132 +78,114 @@ templ header(score types.Ext_ScoreData){
                         }
                     });
                 </script>
-
-        </div>
-   
-    </div>
+		</div>
+	</div>
 }
 
-templ attributes(score types.Ext_ScoreData){
-    <div class={ "flex justify-evenly h-64 text-base " + theme(ctx).Medium_light }>
-        <div class="flex flex-col justify-evenly">
-            <div class="m-8">
-
-                @attElementList("★", "text-white", F(score.SR),
-                "AR", "text-white", F(score.Ar),
-                "CS", "text-white", F(score.Cs),
-                "HP", "text-white", F(score.Hp),
-                "OD", "text-white", F(score.Od),
-                "BPM", "text-white", F(score.Bpm),)
-                
-                @playercard()
-            </div>
-
-        </div>
-        <div class="flex flex-col justify-evenly w-2/5">
-            <div class="w-92 m-8">
-                <div class="flex flex-col justify-evenly">
-                        <!-- (acc, combo, playtime) -->
-                    @attElementList("ACCURACY", "text--yellow", F(score.ACC) + "%",
-                    "COMBO", "text-white", I(score.Combo) + " (" + I(score.Maxcombo) +")",
-                    "Playtime", "text-white", I(score.Time) + "s ")
-
-                        <!-- (PP, ACC, SPEED, AIM FC) -->
-                    @attElementList("PP", "text--pink", F(score.PP),
-                    "ACC", "text-white", F(score.ACCURACYATT),
-                    "SPEED", "text-white", F(score.SPEED), 
-                    "AIM", "text-white", F(score.AIM),
-                    "FCPP", "text--pink--dark", F(score.FCPP))
-
-                        <!-- New Rows (300, 100, 50, MISS) -->
-                    @attElementList("300", "text-blue-500", I(score.Hit300), 
-                    "100", "text-green-500", I(score.Hit100),
-                    "50", "text--orange", I(score.Hit50), 
-                    "MISS", "text-red-600", I(score.HitMiss))
-                </div>
-            </div>
-        </div>
-    </div>
+templ attributes(score types.Ext_ScoreData) {
+	<div class={ "flex justify-evenly h-64 text-base " + theme(ctx).Medium_light }>
+		<div class="flex flex-col justify-evenly">
+			<div class="m-8">
+				@attElementList("★", "text-white", F(score.SR),
+					"AR", "text-white", F(score.Ar),
+					"CS", "text-white", F(score.Cs),
+					"HP", "text-white", F(score.Hp),
+					"OD", "text-white", F(score.Od),
+					"BPM", "text-white", F(score.Bpm))
+				@playercard(score)
+			</div>
+		</div>
+		<div class="flex flex-col justify-evenly w-2/5">
+			<div class="w-92 m-8">
+				<div class="flex flex-col justify-evenly">
+					<!-- (acc, combo, playtime) -->
+					@attElementList("ACCURACY", "text--yellow", F(score.ACC)+"%",
+						"COMBO", "text-white", I(score.Combo)+" ("+I(score.Maxcombo)+")",
+						"Playtime", "text-white", I(score.Time)+"s ")
+					<!-- (PP, ACC, SPEED, AIM FC) -->
+					@attElementList("PP", "text--pink", F(score.PP),
+						"ACC", "text-white", F(score.ACCURACYATT),
+						"SPEED", "text-white", F(score.SPEED),
+						"AIM", "text-white", F(score.AIM),
+						"FCPP", "text--pink--dark", F(score.FCPP))
+					<!-- New Rows (300, 100, 50, MISS) -->
+					@attElementList("300", "text-blue-500", I(score.Hit300),
+						"100", "text-green-500", I(score.Hit100),
+						"50", "text--orange", I(score.Hit50),
+						"MISS", "text-red-600", I(score.HitMiss))
+				</div>
+			</div>
+		</div>
+	</div>
 }
 
-//values should be ... Title color value, 
-templ attElementList(values ...string){
-    <div class="flex justify-evenly">
-    
-    for i := 0; i < len(values); i+=3 {
-        <div class="flex-col flex-1 mb-4">
-            <div class={ "flex justify-evenly rounded-full text-white pl-4 pr-4 " + theme(ctx).Dark}>
-            { values[i] }
-            </div>
-            
-            <div class="flex justify-evenly">
-                <p class={ values[i+1] }>
-            { values[i+2] }
-                </p>
-            </div>
-        </div>
-    }
-    </div>
+//values should be ... Title color value,
+templ attElementList(values ...string) {
+	<div class="flex justify-evenly">
+		for i := 0; i < len(values); i+=3 {
+			<div class="flex-col flex-1 mb-4">
+				<div class={ "flex justify-evenly rounded-full text-white pl-4 pr-4 " + theme(ctx).Dark }>
+					{ values[i] }
+				</div>
+				<div class="flex justify-evenly">
+					<p class={ values[i+1] }>
+						{ values[i+2] }
+					</p>
+				</div>
+			</div>
+		}
+	</div>
 }
 
-templ playercard(){
-                <a href="/me" class="relative">
-                    <div class="h-28 bg-center rounded-lg relative">
-                    <img class="bg-center" src={ player(ctx).ApiUser.CoverURL } style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5;" ></img>
-                        <div class="absolute inset-0 rounded-lg">
-
-                        <img src={ player(ctx).ApiUser.AvatarURL } class={ "h-16 absolute rounded-lg top-2 left-2 " + theme(ctx).Dark }></img>
-                    </div>
-                    <div class={ "absolute rounded-lg top-2 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>
-                        <span class={ "fi fi-" + player(ctx).ApiUser.Country.Code }></span>
-                    </div>
-                    <div class={ "absolute rounded-lg top-2 left-32 text--pink text-white pl-2 pr-2 " + theme(ctx).Dark }>
-                        for range player(ctx).ApiUser.SupportLevel  {
-                        <i class="fas fa-heart"></i>
-                    }
-                        
-                    </div>
-                    <div class={ "absolute rounded-lg top-10 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>{ player(ctx).User.Username } </div>
-                        
-                            <div class="absolute rounded-lg top-20 left-6">
-
-                            <svg width="30" height="30" xmlns="http://www.w3.org/2000/svg">
-                                    
-                                <circle cx="15" cy="15" r="13" fill="transparent" stroke="white" stroke-width="1"></circle>
-                                <circle cx="15" cy="15" r="8" fill="transparent" stroke="white" stroke-width="1"></circle>
-                            
-                                if player(ctx).ApiUser.IsActive && player(ctx).ApiUser.IsOnline {
-                                    <circle cx="15" cy="15" r="10" fill="transparent" stroke="green" stroke-width="4"></circle>
-                                } else if !player(ctx).ApiUser.IsActive && player(ctx).ApiUser.IsOnline {
-                                    <circle cx="15" cy="15" r="10" fill="transparent" stroke="orange" stroke-width="4"></circle>
-                                } else if !player(ctx).ApiUser.IsActive && !player(ctx).ApiUser.IsOnline {
-                                    <circle cx="15" cy="15" r="10" fill="transparent" stroke="gray" stroke-width="4"></circle>
-                                } else if player(ctx).ApiUser.IsActive && !player(ctx).ApiUser.IsOnline {
-                                    <circle cx="15" cy="15" r="10" fill="transparent" stroke="blue" stroke-width="4"></circle>
-                                }
-                           
-                            </svg> 
-                        </div>
-                    
-                    <div class={" absolute rounded-lg top-20 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>
-                        
-                            if player(ctx).ApiUser.IsActive && player(ctx).ApiUser.IsOnline {
-                                Online
-                            } else if !player(ctx).ApiUser.IsActive && player(ctx).ApiUser.IsOnline { 
-                                Away
-                            } else if !player(ctx).ApiUser.IsActive && !player(ctx).ApiUser.IsOnline { 
-                                Offline
-                            } else if player(ctx).ApiUser.IsActive && !player(ctx).ApiUser.IsOnline { 
-                                Active
-                            }
-                    </div>
-                        </div>
-                </a>
+templ playercard(score types.Ext_ScoreData) {
+	<a href={ templ.SafeURL("/users/" + I(score.Userid)) } class="relative">
+		<div class="h-28 bg-center rounded-lg relative">
+			<img class="bg-center" src={ score.ApiUser.CoverURL } style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5;"/>
+			<div class="absolute inset-0 rounded-lg">
+				<img src={ "https://a.ppy.sh/" + I(score.Userid) } class={ "h-16 absolute rounded-lg top-2 left-2 " + theme(ctx).Dark }/>
+			</div>
+			<div class={ "absolute rounded-lg top-2 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>
+				<span class={ "fi fi-" + score.ApiUser.Country.Code }></span>
+			</div>
+			<div class={ "absolute rounded-lg top-2 left-32 text--pink text-white pl-2 pr-2 " + theme(ctx).Dark }>
+				for range score.ApiUser.SupportLevel {
+					<i class="fas fa-heart"></i>
+				}
+			</div>
+			<div class={ "absolute rounded-lg top-10 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>{ score.ApiUser.Username } </div>
+			<div class="absolute rounded-lg top-20 left-6">
+				<svg width="30" height="30" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="15" cy="15" r="13" fill="transparent" stroke="white" stroke-width="1"></circle>
+					<circle cx="15" cy="15" r="8" fill="transparent" stroke="white" stroke-width="1"></circle>
+					if score.ApiUser.IsActive && score.ApiUser.IsOnline {
+						<circle cx="15" cy="15" r="10" fill="transparent" stroke="green" stroke-width="4"></circle>
+					} else if !score.ApiUser.IsActive && score.ApiUser.IsOnline {
+						<circle cx="15" cy="15" r="10" fill="transparent" stroke="orange" stroke-width="4"></circle>
+					} else if !score.ApiUser.IsActive && !score.ApiUser.IsOnline {
+						<circle cx="15" cy="15" r="10" fill="transparent" stroke="gray" stroke-width="4"></circle>
+					} else if score.ApiUser.IsActive && !score.ApiUser.IsOnline {
+						<circle cx="15" cy="15" r="10" fill="transparent" stroke="blue" stroke-width="4"></circle>
+					}
+				</svg>
+			</div>
+			<div class={ " absolute rounded-lg top-20 left-24 text-white pl-2 pr-2 " + theme(ctx).Dark }>
+				if score.ApiUser.IsActive && score.ApiUser.IsOnline {
+					Online
+				} else if !score.ApiUser.IsActive && score.ApiUser.IsOnline {
+					Away
+				} else if !score.ApiUser.IsActive && !score.ApiUser.IsOnline {
+					Offline
+				} else if score.ApiUser.IsActive && !score.ApiUser.IsOnline {
+					Active
+				}
+			</div>
+		</div>
+	</a>
 }
 
-templ progress(scores types.Ext_ScoreData){
-<div class="text-center" > 
-    <h1> Progress </h1>
-    <div>{ scores.Title }</div>
-</div>
+templ progress(scores types.Ext_ScoreData) {
+	<div class="text-center">
+		<h1>Progress </h1>
+		<div>{ scores.ScoreData.Title }</div>
+	</div>
 }

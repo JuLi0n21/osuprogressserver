@@ -24,8 +24,12 @@ type Storage interface {
 	//Userid
 	GetUser(int) (types.User, error)
 
+	GetApiUser(int) (types.ApiUser, error)
+
 	//User
 	SaveUser(types.User) error
+
+	SaveApiUser(types.ApiUser) error
 
 	SaveExtendedScore(types.Ext_ScoreData) error
 

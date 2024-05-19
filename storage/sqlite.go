@@ -2,6 +2,7 @@ package storage
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"osuprogressserver/types"
@@ -65,6 +66,7 @@ func (s *SQLite) GetScore(userid int, limit int, offset int) ([]types.ScoreData,
 func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 
 	stmt, err := s.DB.Prepare(`SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
+	LEFT JOIN ApiUsers on ApiUsers.Userid = Scoredata.Userid
 	LEFT JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
 	LEFT JOIN BeatmapSet on BeatmapSet.BeatmapSetID = Beatmap.BeatmapSetID
 	WHERE Scoreid = ? `)
@@ -83,10 +85,12 @@ func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 	defer rows.Close()
 
 	for rows.Next() {
+
+		var apiuser string
 		var score types.Ext_ScoreData
 		if err := rows.Scan(
 			&score.ScoreId,
-			&score.Title,
+			&score.ScoreData.Title,
 			&score.Date,
 			&score.ScoreData.BeatmapID,
 			&score.Playtype,
@@ -114,6 +118,8 @@ func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 			&score.ACCURACYATT,
 			&score.Grade,
 			&score.FCPP,
+			&score.ApiUser.ID,
+			&apiuser,
 			&score.Beatmap.BeatmapID,
 			&score.Beatmap.BeatmapSetID,
 			&score.Beatmap.Maxcombo,
@@ -123,7 +129,7 @@ func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 			&score.Creator,
 			&score.Tags,
 			&score.CoverList,
-			&score.Cover,
+			&score.BeatmapSet.Cover,
 			&score.Preview,
 			&score.Rankedstatus,
 		); err != nil {
@@ -131,6 +137,9 @@ func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 			fmt.Println(err.Error())
 			return scores, nil
 		}
+
+		json.Unmarshal([]byte(apiuser), &score.ApiUser)
+
 		scores = append(scores, score)
 	}
 
@@ -145,6 +154,7 @@ func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 func (s *SQLite) GetRandomScores(limit int) ([]types.Ext_ScoreData, error) {
 
 	stmt, err := s.DB.Prepare(`SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
+	LEFT JOIN ApiUsers on ApiUsers.Userid = Scoredata.Userid
 	LEFT JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
 	LEFT JOIN BeatmapSet on BeatmapSet.BeatmapSetID = Beatmap.BeatmapSetID
 	ORDER BY RANDOM() LIMIT ?`)
@@ -164,10 +174,11 @@ func (s *SQLite) GetRandomScores(limit int) ([]types.Ext_ScoreData, error) {
 	defer rows.Close()
 
 	for rows.Next() {
+		var apiuser string
 		var score types.Ext_ScoreData
 		if err := rows.Scan(
 			&score.ScoreId,
-			&score.Title,
+			&score.ScoreData.Title,
 			&score.Date,
 			&score.ScoreData.BeatmapID,
 			&score.Playtype,
@@ -195,6 +206,8 @@ func (s *SQLite) GetRandomScores(limit int) ([]types.Ext_ScoreData, error) {
 			&score.ACCURACYATT,
 			&score.Grade,
 			&score.FCPP,
+			&score.ApiUser.ID,
+			&apiuser,
 			&score.Beatmap.BeatmapID,
 			&score.Beatmap.BeatmapSetID,
 			&score.Beatmap.Maxcombo,
@@ -204,7 +217,7 @@ func (s *SQLite) GetRandomScores(limit int) ([]types.Ext_ScoreData, error) {
 			&score.Creator,
 			&score.Tags,
 			&score.CoverList,
-			&score.Cover,
+			&score.BeatmapSet.Cover,
 			&score.Preview,
 			&score.Rankedstatus,
 		); err != nil {
@@ -212,6 +225,8 @@ func (s *SQLite) GetRandomScores(limit int) ([]types.Ext_ScoreData, error) {
 			fmt.Println(err.Error())
 			return scores, nil
 		}
+
+		json.Unmarshal([]byte(apiuser), &score.ApiUser)
 		scores = append(scores, score)
 	}
 
@@ -230,9 +245,10 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 	}
 
 	stmt, err := s.DB.Prepare(`SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
+	LEFT JOIN ApiUsers on ApiUsers.Userid = Scoredata.Userid
 	LEFT JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
 	LEFT JOIN BeatmapSet on BeatmapSet.BeatmapSetID = Beatmap.BeatmapSetID
-	WHERE Userid = ? 
+	WHERE Scoredata.Userid = ? 
 	AND (Title LIKE ? OR Version LIKE ?)
 	ORDER BY date
 	LIMIT ? 
@@ -253,10 +269,11 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 	defer rows.Close()
 
 	for rows.Next() {
+		var apiuser string
 		var score types.Ext_ScoreData
 		if err := rows.Scan(
 			&score.ScoreId,
-			&score.Title,
+			&score.ScoreData.Title,
 			&score.Date,
 			&score.ScoreData.BeatmapID,
 			&score.Playtype,
@@ -284,6 +301,8 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 			&score.ACCURACYATT,
 			&score.Grade,
 			&score.FCPP,
+			&score.ApiUser.ID,
+			&apiuser,
 			&score.Beatmap.BeatmapID,
 			&score.Beatmap.BeatmapSetID,
 			&score.Beatmap.Maxcombo,
@@ -293,7 +312,7 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 			&score.Creator,
 			&score.Tags,
 			&score.CoverList,
-			&score.Cover,
+			&score.BeatmapSet.Cover,
 			&score.Preview,
 			&score.Rankedstatus,
 		); err != nil {
@@ -301,6 +320,8 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 			fmt.Println(err.Error())
 			return scores, nil
 		}
+
+		json.Unmarshal([]byte(apiuser), &score.ApiUser)
 		scores = append(scores, score)
 	}
 
@@ -327,6 +348,53 @@ func (s *SQLite) GetUser(Userid int) (types.User, error) {
 
 func (s *SQLite) SaveUser(User types.User) error {
 	return nil
+}
+
+func (s *SQLite) SaveApiUser(User types.ApiUser) error {
+
+	us, err := json.Marshal(User)
+	if err != nil {
+		return err
+	}
+
+	stmt, err := s.DB.Prepare(`INSERT OR REPLACE INTO ApiUsers (USERID, APIUSER)
+	VALUES(?, ?);`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(User.ID, us)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *SQLite) GetApiUser(Userid int) (types.ApiUser, error) {
+
+	stmt, err := s.DB.Prepare(`SELECT ApiUser FROM ApiUsers WHERE USERID = ?`)
+	if err != nil {
+		return types.ApiUser{}, err
+	}
+	defer stmt.Close()
+
+	var us string
+
+	err = stmt.QueryRow(Userid).Scan(&us)
+	if err != nil {
+		return types.ApiUser{}, err
+	}
+
+	var u types.ApiUser
+
+	err = json.Unmarshal([]byte(us), &u)
+	if err != nil {
+		return types.ApiUser{}, err
+	}
+
+	return u, nil
 }
 
 func (s *SQLite) SaveExtendedScore(score types.Ext_ScoreData) error {
@@ -553,6 +621,11 @@ func createTables(db *sql.DB) {
 		log.Fatal(err)
 	}
 
+	_, err = db.Exec(`CREATE INDEX IF NOT EXISTS idx_screentime_date ON ScreenTime(Userid, Date)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS Users (
 		Userid INTEGER NOT NULL PRIMARY KEY,
 		Username    TEXT,
@@ -566,13 +639,63 @@ func createTables(db *sql.DB) {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec(`CREATE INDEX IF NOT EXISTS idx_screentime_date ON ScreenTime(Userid, Date)`)
+	_, err = db.Exec(`CREATE INDEX IF NOT EXISTS idx_users ON Users(Userid)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS ApiUsers (
+		Userid  INTEGER NOT NULL PRIMARY KEY,
+		ApiUser TEXT
+	);`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec(`CREATE INDEX IF NOT EXISTS idx_apiusers ON ApiUsers(Userid)`)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 func (s *SQLite) MockScores(length int) error {
+	userids := []int{14100399, 11705938, 2, 18767550, 124493}
+	usernames := []string{"JuLi0n_", "Nikurax", "Peppy", "Seru", "Chocomint"}
+	banners := []string{"https://assets.ppy.sh/user-profile-covers/14100399/cd1600936d7a56115cd147f47169addcf8f812133861b667c7dd3d177ca5068d.jpeg",
+		"https://assets.ppy.sh/user-profile-covers/11705938/c8ccd57ec0ba71939052918bde270fe396061a8b33ad2076a410b24fb23a74e7.png",
+		"https://assets.ppy.sh/user-profile-covers/2/baba245ef60834b769694178f8f6d4f6166c5188c740de084656ad2b80f1eea7.jpeg",
+		"https://assets.ppy.sh/user-profile-covers/18767550/0a1991467c0b417840b2b2ba2b5d6e26a18cab42cd89f9a2fb9948ab3be37af4.gif",
+		"https://osu.ppy.sh/images/headers/profile-covers/c6.jpg",
+	}
+	countrys := []string{"Germany", "Germany", "Australia", "Saudi Arabia", "South Korea"}
+	countrycodes := []string{"DE", "DE", "AU", "SA", "KR"}
+
+	for i := range userids {
+		u := types.UserContext{
+			ApiUser: types.ApiUser{
+				ID:        userids[i],
+				Username:  usernames[i],
+				AvatarURL: fmt.Sprintf("https://a.ppy.sh/%d", userids[i]),
+				CoverURL:  banners[i],
+
+				Country: types.Country{
+					Code: countrycodes[i],
+					Name: countrys[i],
+				},
+				IsActive: false,
+				IsOnline: false,
+			},
+			User: types.User{
+				Username: usernames[i],
+				UserId:   userids[i],
+			},
+		}
+
+		err := s.SaveApiUser(u.ApiUser)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
 
 	for i := range length {
 
@@ -593,8 +716,8 @@ func (s *SQLite) MockScores(length int) error {
 			Od:          gofakeit.Float64Range(7, 10),
 			SR:          gofakeit.Float64Range(2, 10),
 			Bpm:         gofakeit.Float64Range(50, 280),
-			Userid:      gofakeit.RandomInt([]int{14100399, 3442200, 2, 23232323, 1000000}),
-			ACC:         gofakeit.Float64Range(7, 10),
+			Userid:      gofakeit.RandomInt(userids),
+			ACC:         gofakeit.Float64Range(85, 100),
 			Score:       gofakeit.Int(),
 			Combo:       gofakeit.IntRange(10, maxcombo),
 			Hit50:       gofakeit.IntN(15),
@@ -624,7 +747,7 @@ func (s *SQLite) MockScores(length int) error {
 		beatmapSet := types.BeatmapSet{
 			BeatmapSetID: beatmapsetid,
 			Artist:       gofakeit.Name(),
-			Creator:      gofakeit.Name(),
+			Creator:      gofakeit.Username(),
 			Tags:         gofakeit.RandomString([]string{"music", "game", "fun"}),
 			CoverList:    gofakeit.RandomString([]string{"https://assets.ppy.sh/beatmaps/1800953/covers/list@2x.jpg?1686054624", "https://assets.ppy.sh/beatmaps/628368/covers/cover@2x.jpg?1650651127"}),
 			Cover:        gofakeit.RandomString([]string{"https://assets.ppy.sh/beatmaps/1800953/covers/cover@2x.jpg?1686054624", "https://assets.ppy.sh/beatmaps/628368/covers/cover@2x.jpg?1650651127", "https://assets.ppy.sh/beatmaps/1895624/covers/cover@2x.jpg?1672353044", "https://assets.ppy.sh/beatmaps/426890/covers/cover@2x.jpg?1683195501", "https://assets.ppy.sh/beatmaps/1174754/covers/cover@2x.jpg?1650697061"}),
