@@ -67,7 +67,7 @@ func (s *SQLite) GetExtScoreById(id int) ([]types.Ext_ScoreData, error) {
 
 	stmt, err := s.DB.Prepare(`SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
 	LEFT JOIN ApiUsers on ApiUsers.Userid = Scoredata.Userid
-	LEFT JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
+	INNER JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
 	LEFT JOIN BeatmapSet on BeatmapSet.BeatmapSetID = Beatmap.BeatmapSetID
 	WHERE Scoreid = ? `)
 
@@ -155,7 +155,7 @@ func (s *SQLite) GetRandomScores(limit int) ([]types.Ext_ScoreData, error) {
 
 	stmt, err := s.DB.Prepare(`SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
 	LEFT JOIN ApiUsers on ApiUsers.Userid = Scoredata.Userid
-	LEFT JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
+	INNER JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
 	LEFT JOIN BeatmapSet on BeatmapSet.BeatmapSetID = Beatmap.BeatmapSetID
 	ORDER BY RANDOM() LIMIT ?`)
 
@@ -246,7 +246,7 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 
 	stmt, err := s.DB.Prepare(`SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
 	LEFT JOIN ApiUsers on ApiUsers.Userid = Scoredata.Userid
-	LEFT JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
+	INNER JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
 	LEFT JOIN BeatmapSet on BeatmapSet.BeatmapSetID = Beatmap.BeatmapSetID
 	WHERE Scoredata.Userid = ? 
 	AND (Title LIKE ? OR Version LIKE ?)

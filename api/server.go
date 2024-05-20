@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
+	"github.com/gofiber/fiber/v2/middleware/pprof"
 	//	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
@@ -22,13 +23,15 @@ func NewServer(port string, store storage.Storage) *Server {
 }
 
 func (s *Server) Start() error {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		CaseSensitive: false,
+	})
 
 	//prometheus := fiberprometheus.New("Osu!Progress")
 	//prometheus.RegisterAt(app, "/metrics")
 	//app.Use(prometheus.Middleware)
 
-	app.Use(logger.New())
+	app.Use(logger.New(), pprof.New())
 
 	app.Get("/metrics", monitor.New())
 
