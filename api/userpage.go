@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"osuprogressserver/cmp"
 	"osuprogressserver/types"
 	"strconv"
@@ -16,7 +15,7 @@ func (s *Server) Userpage(c *fiber.Ctx) error {
 
 	id := c.Params("id")
 
-	player := c.Locals("User").(types.UserContext)
+	player := c.UserContext().Value("player").(types.UserContext)
 	user := types.UserContext{}
 	if c.Path() == "/me" {
 		if player.User.UserId == 0 {
@@ -51,11 +50,9 @@ func (s *Server) Userpage(c *fiber.Ctx) error {
 		Screen: "Mainmenu",
 	}
 
-	ctx := context.WithValue(context.Background(), "player", player)
-
 	component := cmp.View_Userpage(user.ApiUser, stats)
 
-	handler := adaptor.HTTPHandler(C(templ.Handler(component), ctx))
+	handler := adaptor.HTTPHandler(C(templ.Handler(component), c.UserContext()))
 
 	return handler(c)
 }

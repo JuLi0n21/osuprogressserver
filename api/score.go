@@ -27,9 +27,6 @@ func (s *Server) ScorePage(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	}
 
-	//fmt.Println(c.Locals("User").(types.UserContext).User.Username)
-	player := c.Locals("User").(types.UserContext)
-
 	if len(scores) == 0 {
 		return c.SendStatus(404)
 	}
@@ -42,8 +39,7 @@ func (s *Server) ScorePage(c *fiber.Ctx) error {
 		Light:        "score-backdrop--light",
 	}
 
-	ctx := context.WithValue(context.Background(), "theme", themes)
-	ctx = context.WithValue(ctx, "player", player)
+	ctx := context.WithValue(c.UserContext(), "theme", themes)
 
 	component := cmp.View_ScoreSite(scores)
 

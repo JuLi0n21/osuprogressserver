@@ -1,11 +1,9 @@
 package api
 
 import (
-	"context"
 	"fmt"
 	"osuprogressserver/cmp"
 	"osuprogressserver/types"
-	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
@@ -35,8 +33,8 @@ func (s *Server) ScoreSearch(c *fiber.Ctx) error {
 
 	//fmt.Println(q)
 
-	if c.Locals("User").(types.UserContext).User.UserId != 0 {
-		q.userid = c.Locals("User").(types.UserContext).User.UserId
+	if c.UserContext().Value("player").(types.UserContext).User.UserId != 0 {
+		q.userid = c.UserContext().Value("player").(types.UserContext).User.UserId
 
 	} else {
 		q.userid = c.QueryInt("userid")
@@ -54,24 +52,9 @@ func (s *Server) ScoreSearch(c *fiber.Ctx) error {
 		return c.JSON(scores)
 	}
 
-	themes := cmp.DefaultTheme()
-
-	if strings.Contains(c.Get("Referer"), "/score/") {
-		themes = types.Theme{
-			Dark:         "score-backdrop--dark",
-			Medium_dark:  "score-backdrop--medium--dark",
-			Medium:       "score-backdrop--medium",
-			Medium_light: "score-backdrop--medium--light",
-			Light:        "score-backdrop--light",
-		}
-
-	}
-
-	ctx := context.WithValue(context.Background(), "theme", themes)
-
 	component := cmp.ScoreContainer(scores, q.limit, q.offset+len(scores))
 
-	handler := adaptor.HTTPHandler(C(templ.Handler(component), ctx))
+	handler := adaptor.HTTPHandler(C(templ.Handler(component), c.UserContext()))
 
 	return handler(c)
 }
@@ -141,4 +124,13 @@ func (s *Server) Score(c *fiber.Ctx) error {
 	s.store.SaveExtendedScore(score)
 
 	return c.SendStatus(200)
+}
+
+func (s *Server) PlayerIcon(c *fiber.Ctx) error {
+
+	component := cmp.PlayerIcon()
+
+	handler := adaptor.HTTPHandler(C(templ.Handler(component), c.UserContext()))
+
+	return handler(c)
 }

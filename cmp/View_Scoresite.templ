@@ -8,7 +8,7 @@ templ View_ScoreSite(scores []types.Ext_ScoreData) {
 	@Head()
 	<body class={ "flex justify-center text-white " + theme(ctx).Dark }>
 		@FixedIcons()
-		<div class={ "content w-1/2 rounded-lg text-white " + theme(ctx).Dark }>
+		<div class={ "content w-1/2 h-max rounded-lg text-white " + theme(ctx).Dark }>
 			<div id="ScoreData">
 				@header(scores[0])
 				@attributes(scores[0])
@@ -16,6 +16,7 @@ templ View_ScoreSite(scores []types.Ext_ScoreData) {
 			@progress(scores[0])
 			@Spacer()
 			@ScoreSearch(scores, 10, len(scores))
+			@Spacer()
 		</div>
 	</body>
 }
@@ -45,7 +46,7 @@ templ header(score types.Ext_ScoreData) {
 				{ score.Version } by { score.Creator }
 			</a>
 			<p class={ "absolute bottom-0 right-0 rounded-lg m-3 p-1 " + theme(ctx).Dark }>
-				{ player(ctx).User.Username } at { score.Date }
+				{ score.ApiUser.Username } at { score.Date }
 			</p>
 			<button id="playButton" class={ "absolute left-2 top-52 text--pink hover:text-white rounded-full p-4 text-2xl " + theme(ctx).Dark }>
 				<i class="fas fa-play"></i>

@@ -157,7 +157,8 @@ func (s *SQLite) GetRandomScores(limit int) ([]types.Ext_ScoreData, error) {
 	LEFT JOIN ApiUsers on ApiUsers.Userid = Scoredata.Userid
 	INNER JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
 	LEFT JOIN BeatmapSet on BeatmapSet.BeatmapSetID = Beatmap.BeatmapSetID
-	ORDER BY RANDOM() LIMIT ?`)
+	ORDER BY RANDOM()
+	LIMIT ?`)
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -574,7 +575,7 @@ func createTables(db *sql.DB) {
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS BeatmapSet (
 		BeatmapSetID INT NOT NULL PRIMARY KEY,
 		Artist       TEXT,
-		Creator		 TEXT,
+		Creator      TEXT,
 		Tags         TEXT,
 		CoverList    TEXT,
 		Cover        TEXT,

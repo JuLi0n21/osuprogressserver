@@ -1,0 +1,20 @@
+package cmp
+
+templ PlayerIcon(){
+
+if player(ctx).User.UserId == 0 {
+<a href="/login" class={ "fixed top-0 left-2 mt-4 mb-4 mr-3 p-3 rounded-full text-xl z-10 " + theme(ctx).Light }>
+    <div class={ "rounded-full " + theme(ctx).Light }>
+    <span class="mix-blend-difference" >Login with osu! </span>
+    </div>
+</a>
+} else {
+<a href="/me" class={ "fixed left-2 top-0 flex flex-grow items-center text-white text-xl rounded-full h-14 mt-4 mb-4 mr-3 p-3 z-10 " + theme(ctx).Light }>
+    <img class="h-12 ml-1 w-auto rounded-full" src={ player(ctx).ApiUser.AvatarURL } alt={ player(ctx).User.Username }></img>
+    <span class="invisible">    { player(ctx).User.Username } </span>
+    <span class="absolute z-10 left-1/2 transform -translate-x-1/2 text-xl p-2 mix-blend-difference">
+        { player(ctx).User.Username }
+    </span>
+</a>
+}
+}

@@ -2,7 +2,9 @@ package api
 
 import (
 	"context"
-//	"log/slog"
+	"strings"
+
+	//	"log/slog"
 	"math/rand"
 	"net/http"
 	"osuprogressserver/cmp"
@@ -23,7 +25,7 @@ func CookieClicker(c *fiber.Ctx) error {
 	user, err := UserSessions.Read(CookieID)
 
 	if err != nil {
-//		slog.Log(c.Context(), slog.LevelInfo, "New Session Created")
+		//		slog.Log(c.Context(), slog.LevelInfo, "New Session Created")
 		cookie := generateUserID(56)
 		user = types.UserContext{
 			User:     cmp.DefaultUser().User,
@@ -44,14 +46,33 @@ func CookieClicker(c *fiber.Ctx) error {
 			SameSite:    "None",
 		})
 	}
-	c.Locals("User", user)
+
+	c.SetUserContext(context.WithValue(c.UserContext(), "player", user))
+	return c.Next()
+}
+
+func Styler(c *fiber.Ctx) error {
+
+	themes := cmp.DefaultTheme()
+
+	if strings.Contains(string(c.Context().Referer()), "/score/") && strings.HasPrefix(c.Path(), "/api/") {
+		themes = types.Theme{
+			Dark:         "score-backdrop--dark",
+			Medium_dark:  "score-backdrop--medium--dark",
+			Medium:       "score-backdrop--medium",
+			Medium_light: "score-backdrop--medium--light",
+			Light:        "score-backdrop--light",
+		}
+	}
+
+	c.SetUserContext(context.WithValue(c.UserContext(), "theme", themes))
 
 	return c.Next()
 }
 
 func Authorization(c *fiber.Ctx) error {
 
-	if c.Locals("User").(types.UserContext).User.UserId == 0 {
+	if c.UserContext().Value("User").(types.UserContext).User.UserId == 0 {
 		return c.Redirect("/login")
 	}
 

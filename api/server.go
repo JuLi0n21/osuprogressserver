@@ -3,7 +3,9 @@ package api
 import (
 	"osuprogressserver/storage"
 
+	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cache"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
@@ -27,23 +29,22 @@ func (s *Server) Start() error {
 		CaseSensitive: false,
 	})
 
-	//prometheus := fiberprometheus.New("Osu!Progress")
-	//prometheus.RegisterAt(app, "/metrics")
-	//app.Use(prometheus.Middleware)
+	prometheus := fiberprometheus.New("Osu!Progress")
+	prometheus.RegisterAt(app, "/prometheus")
+	app.Use(prometheus.Middleware)
 
 	app.Use(logger.New(), pprof.New())
 
 	app.Get("/metrics", monitor.New())
 
-	app.Use(CookieClicker)
+	app.Use(CookieClicker, Styler)
 	app.Static("assets", "./static")
 
 	api := app.Group("/api")
 	api.Get("/scoresearch/*", s.ScoreSearch)
 	api.Get("/score", s.Score)
 	api.Post("/score", s.Score)
-
-	app.Get("/", s.Index)
+	api.Get("/player", s.PlayerIcon)
 
 	app.Get("/login", s.Login)
 
@@ -51,8 +52,9 @@ func (s *Server) Start() error {
 	oauth.Get("/code", s.Oauth)
 	oauth.Get("/token", s.OauthAccess)
 
-	//app.Use(Authorization)
 	app.Get("/me", s.Userpage)
+	app.Use(cache.New())
+	app.Get("/", s.Index)
 	app.Get("/users/:id", s.Userpage)
 	app.Get("/score/:id", s.ScorePage)
 
