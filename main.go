@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"osuprogressserver/api"
 	"osuprogressserver/storage"
 
@@ -29,7 +30,10 @@ func main() {
 		fmt.Println("Creating Fake Data")
 		storage.MockScores(100000)
 	}
-	s := api.NewServer(*port, storage)
+
+	env := os.Getenv("ENV")
+
+	s := api.NewServer(*port, storage, env)
 
 	fmt.Println("Webserver Running at", *port)
 	log.Fatal(s.Start())

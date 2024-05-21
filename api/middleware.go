@@ -70,6 +70,14 @@ func Styler(c *fiber.Ctx) error {
 	return c.Next()
 }
 
+func redirectToHTTPS(c *fiber.Ctx) error {
+	if c.Protocol() == "http" {
+		url := "https://" + c.Hostname() + c.OriginalURL()
+		return c.Redirect(url, fiber.StatusMovedPermanently)
+	}
+	return c.Next()
+}
+
 func Authorization(c *fiber.Ctx) error {
 
 	if c.UserContext().Value("User").(types.UserContext).User.UserId == 0 {

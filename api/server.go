@@ -9,18 +9,23 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
-	//	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 type Server struct {
-	port  string
-	store storage.Storage
+	port   string
+	store  storage.Storage
+	secure bool
 }
 
-func NewServer(port string, store storage.Storage) *Server {
+func NewServer(port string, store storage.Storage, env string) *Server {
+	secure := false
+	if env == "prod" {
+		secure = true
+	}
 	return &Server{
-		port:  port,
-		store: store,
+		port:   port,
+		store:  store,
+		secure: secure,
 	}
 }
 
@@ -35,7 +40,13 @@ func (s *Server) Start() error {
 
 	app.Use(logger.New(), pprof.New())
 
-	app.Get("/metrics", monitor.New())
+	app.Get("/metrics", monitor.New(monitor.Config{
+		Title: "Osu!Progress",
+	}))
+
+	if s.secure {
+		app.Use(redirectToHTTPS)
+	}
 
 	app.Use(CookieClicker, Styler)
 	app.Static("assets", "./static")
