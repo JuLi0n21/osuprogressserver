@@ -34,15 +34,14 @@ func (s *Server) Start() error {
 		CaseSensitive: false,
 	})
 
+	app.Get("/metrics", monitor.New(monitor.Config{
+		Title: "Osu!Progress",
+	}))
 	prometheus := fiberprometheus.New("Osu!Progress")
 	prometheus.RegisterAt(app, "/prometheus")
 	app.Use(prometheus.Middleware)
 
 	app.Use(logger.New(), pprof.New())
-
-	app.Get("/metrics", monitor.New(monitor.Config{
-		Title: "Osu!Progress",
-	}))
 
 	if s.secure {
 		app.Use(redirectToHTTPS)
