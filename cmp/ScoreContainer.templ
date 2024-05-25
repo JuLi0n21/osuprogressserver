@@ -7,7 +7,7 @@ templ ScoreContainer(scores []types.Ext_ScoreData, limit int, offset int) {
     for _, score := range scores {
         @ScoreSearchItem(score)
     }
-        <div class="flex justify-center" id="loadmore">
+        <a class="flex justify-center" id="loadmore">
             <div hx-get="/api/scoresearch"
             hx-trigger="click, throttle:5s, delay:10s"
             hx-target="#loadmore"
@@ -16,14 +16,19 @@ templ ScoreContainer(scores []types.Ext_ScoreData, limit int, offset int) {
             class={ "flex rounded-md hover:bg-pink-900 justify-between mb-1 mt-1 m-4 text-center cursor-pointer rounded-lg w-5/6 select-none " + theme(ctx).Medium_light }>
             if (len(scores) == 0) {
                     <img src="/assets/img/not-found.gif" class="rounded-lg w-16 h-16" alt="?"></img>
+                if (player(ctx).User.UserId == 0) {
+                    <p class="flex-1 text-white p-5"> Login is required to search </p>
+                } else {
                     <p class="flex-1 text-white p-5"> No Scores Found, Retry</p>
+                }
                     <img src="/assets/img/not-found.gif" class=" rounded-lg  w-16 h-16" alt="?"></img>
+                    
             } else {
                 <p class="p-5"> Load More... </p>
             }
                 <input id="limit" name="limit" type="hidden" value={I(limit)}></input>
                 <input id="offset" name="offset" type="hidden" value={I(offset)}></input>
             </div>
-        </div> 
+        </a> 
     </div>
 }

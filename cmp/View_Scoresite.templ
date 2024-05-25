@@ -15,8 +15,9 @@ templ View_ScoreSite(scores []types.Ext_ScoreData) {
 			</div>
 			@progress(scores[0])
 			@Spacer()
-			@ScoreSearch(scores, 10, len(scores))
+			@ScoreSearch(scores, 10, 0)
 			@Spacer()
+			@Footer()
 		</div>
 	</body>
 }

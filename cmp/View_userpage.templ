@@ -10,8 +10,11 @@ templ View_Userpage(user types.ApiUser, stats types.Stats) {
             <h1 class="flex justify-center p-4 m-2 ">Osu Progress</h1>
             @Header(user, stats)
             @Spacer()
-            @ScoreSearch([]types.Ext_ScoreData{}, 10, 0)
+            <div hx-get={ "/api/scoresearch?limit=100&userid=" + I(player(ctx).User.UserId) }
+                hx-trigger="load"
+                hx-swap="OUTERhtml"> </div>
             @Spacer()
+            @Footer()
         </div>
     </body>
 }

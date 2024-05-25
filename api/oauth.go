@@ -116,6 +116,12 @@ func (s *Server) Oauth(c *fiber.Ctx) error {
 		if err != nil {
 			return err
 		}
+
+		err = s.store.SaveApiUser(*apidata)
+		if err != nil {
+			return err
+		}
+
 		UserSessions.Write(CookieID, types.UserContext{
 			User:     newuser,
 			ApiUser:  *apidata,

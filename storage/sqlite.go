@@ -239,21 +239,26 @@ func (s *SQLite) GetRandomScores(limit int) ([]types.Ext_ScoreData, error) {
 	return scores, nil
 }
 
-func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([]types.Ext_ScoreData, error) {
+func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int, beatmapid int) ([]types.Ext_ScoreData, error) {
 
 	if limit > 100 || limit == 0 {
 		limit = 100
 	}
 
-	stmt, err := s.DB.Prepare(`SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
+	qb := `SELECT ScoreData.ROWID as Scoreid, * FROM ScoreData
 	LEFT JOIN ApiUsers on ApiUsers.Userid = Scoredata.Userid
 	INNER JOIN Beatmap on Beatmap.BeatmapID = Scoredata.BeatmapID
 	LEFT JOIN BeatmapSet on BeatmapSet.BeatmapSetID = Beatmap.BeatmapSetID
-	WHERE Scoredata.Userid = ? 
-	AND (Title LIKE ? OR Version LIKE ?)
-	ORDER BY date
-	LIMIT ? 
-	OFFSET ?`)
+	WHERE Scoredata.Userid = ?
+        AND (Title LIKE ? OR Version LIKE ?)`
+
+	if beatmapid != 0 {
+		qb += " AND Beatmap.BeatmapID = ?"
+	}
+
+	qb += ` ORDER BY date LIMIT ? OFFSET ?`
+
+	stmt, err := s.DB.Prepare(qb)
 	if err != nil {
 		fmt.Println(err.Error())
 		return []types.Ext_ScoreData{}, nil
@@ -261,74 +266,31 @@ func (s *SQLite) GetExtScore(query string, userid int, limit int, offset int) ([
 
 	var scores []types.Ext_ScoreData
 	var q = "%" + query + "%"
-	//fmt.Println(q, limit, offset, userid)
-	rows, err := stmt.Query(userid, q, q, limit, offset)
-	if err != nil {
-		fmt.Println(err.Error())
-		return scores, nil
-	}
-	defer rows.Close()
 
-	for rows.Next() {
-		var apiuser string
-		var score types.Ext_ScoreData
-		if err := rows.Scan(
-			&score.ScoreId,
-			&score.ScoreData.Title,
-			&score.Date,
-			&score.ScoreData.BeatmapID,
-			&score.Playtype,
-			&score.Ar,
-			&score.Cs,
-			&score.Hp,
-			&score.Od,
-			&score.SR,
-			&score.Bpm,
-			&score.Userid,
-			&score.ACC,
-			&score.Score,
-			&score.Combo,
-			&score.Hit50,
-			&score.Hit100,
-			&score.Hit300,
-			&score.Ur,
-			&score.HitMiss,
-			&score.Mode,
-			&score.Mods,
-			&score.Time,
-			&score.PP,
-			&score.AIM,
-			&score.SPEED,
-			&score.ACCURACYATT,
-			&score.Grade,
-			&score.FCPP,
-			&score.ApiUser.ID,
-			&apiuser,
-			&score.Beatmap.BeatmapID,
-			&score.Beatmap.BeatmapSetID,
-			&score.Beatmap.Maxcombo,
-			&score.Beatmap.Version,
-			&score.BeatmapSet.BeatmapSetID,
-			&score.Artist,
-			&score.Creator,
-			&score.Tags,
-			&score.CoverList,
-			&score.BeatmapSet.Cover,
-			&score.Preview,
-			&score.Rankedstatus,
-		); err != nil {
-
+	if beatmapid != 0 {
+		rows, err := stmt.Query(userid, q, q, limit, offset, beatmapid)
+		if err != nil {
 			fmt.Println(err.Error())
 			return scores, nil
 		}
 
-		json.Unmarshal([]byte(apiuser), &score.ApiUser)
-		scores = append(scores, score)
-	}
+		scores, err = makeScores(rows)
+		if err != nil {
+			fmt.Println(err.Error())
+			return scores, nil
+		}
+	} else {
+		rows, err := stmt.Query(userid, q, q, limit, offset)
+		if err != nil {
+			fmt.Println(err.Error())
+			return scores, nil
+		}
 
-	if err := rows.Err(); err != nil {
-		fmt.Println(err.Error())
-		return scores, nil
+		scores, err = makeScores(rows)
+		if err != nil {
+			fmt.Println(err.Error())
+			return scores, nil
+		}
 	}
 
 	return scores, nil
@@ -526,6 +488,74 @@ func (s *SQLite) SaveBanchoTime(score types.BanchoTime) error {
 
 func (s *SQLite) SaveScreenTime(score types.ScreenTime) error {
 	return nil
+}
+
+func makeScores(rows *sql.Rows) ([]types.Ext_ScoreData, error) {
+
+	var scores []types.Ext_ScoreData
+
+	for rows.Next() {
+		var apiuser string
+		var score types.Ext_ScoreData
+		if err := rows.Scan(
+			&score.ScoreId,
+			&score.ScoreData.Title,
+			&score.Date,
+			&score.ScoreData.BeatmapID,
+			&score.Playtype,
+			&score.Ar,
+			&score.Cs,
+			&score.Hp,
+			&score.Od,
+			&score.SR,
+			&score.Bpm,
+			&score.Userid,
+			&score.ACC,
+			&score.Score,
+			&score.Combo,
+			&score.Hit50,
+			&score.Hit100,
+			&score.Hit300,
+			&score.Ur,
+			&score.HitMiss,
+			&score.Mode,
+			&score.Mods,
+			&score.Time,
+			&score.PP,
+			&score.AIM,
+			&score.SPEED,
+			&score.ACCURACYATT,
+			&score.Grade,
+			&score.FCPP,
+			&score.ApiUser.ID,
+			&apiuser,
+			&score.Beatmap.BeatmapID,
+			&score.Beatmap.BeatmapSetID,
+			&score.Beatmap.Maxcombo,
+			&score.Beatmap.Version,
+			&score.BeatmapSet.BeatmapSetID,
+			&score.Artist,
+			&score.Creator,
+			&score.Tags,
+			&score.CoverList,
+			&score.BeatmapSet.Cover,
+			&score.Preview,
+			&score.Rankedstatus,
+		); err != nil {
+
+			return scores, err
+		}
+
+		json.Unmarshal([]byte(apiuser), &score.ApiUser)
+		scores = append(scores, score)
+	}
+
+	if err := rows.Err(); err != nil {
+		return scores, err
+	}
+
+	return scores, nil
+
 }
 
 func createTables(db *sql.DB) {

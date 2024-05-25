@@ -7,7 +7,7 @@ templ ScoreSearch(scores []types.Ext_ScoreData, limit int, offset int){
     if len(scores) != 0 {
    <form class="text-center mt-4 mb-4"
    hx-get="/api/scoresearch"
-   hx-trigger="input delay:500ms"
+   hx-trigger="load, input, delay:500ms"
    hx-target="#scorecontainer"
    hx-swap="innerHTML transition:true"
    hx-indicator="#spinner"

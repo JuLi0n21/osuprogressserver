@@ -10,8 +10,9 @@ templ View_Index(scores []types.Ext_ScoreData) {
         <div class={ "h-max content rounded-lg " + theme(ctx).Medium_dark }>
             <h1 class="flex justify-center p-4 m-2 ">Osu Progress</h1>
             @Spacer()
-            @ScoreSearch(scores, 10, len(scores))
+            @ScoreContainer(scores, 10, len(scores))
             @Spacer()
+            @Footer()
         </div>
     </body>
 }

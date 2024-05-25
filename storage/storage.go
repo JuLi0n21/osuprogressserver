@@ -10,7 +10,7 @@ type Storage interface {
 	GetRandomScores(int) ([]types.Ext_ScoreData, error)
 
 	//userid, includes beatmapset info
-	GetExtScore(string, int, int, int) ([]types.Ext_ScoreData, error)
+	GetExtScore(string, int, int, int, int) ([]types.Ext_ScoreData, error)
 
 	//Scoreid
 	GetExtScoreById(int) ([]types.Ext_ScoreData, error)

@@ -11,12 +11,13 @@ import (
 )
 
 type SearchQuery struct {
-	query  string
-	from   string
-	to     string
-	limit  int
-	offset int
-	userid int
+	query     string
+	from      string
+	to        string
+	limit     int
+	offset    int
+	userid    int
+	beatmapid int
 }
 
 func (s *Server) ScoreSearch(c *fiber.Ctx) error {
@@ -30,6 +31,7 @@ func (s *Server) ScoreSearch(c *fiber.Ctx) error {
 	q.limit = c.QueryInt("limit", 10)
 	q.offset = c.QueryInt("offset", 0)
 	q.query = c.Query("query", "")
+	q.beatmapid = c.QueryInt("beatmapid", 0)
 
 	//fmt.Println(q)
 
@@ -40,9 +42,13 @@ func (s *Server) ScoreSearch(c *fiber.Ctx) error {
 		q.userid = c.QueryInt("userid")
 	}
 
+	if q.userid == 0 {
+		c.Status(401)
+	}
+
 	var scores []types.Ext_ScoreData
 
-	scores, err := s.store.GetExtScore(q.query, q.userid, q.limit, q.offset)
+	scores, err := s.store.GetExtScore(q.query, q.userid, q.limit, q.offset, q.beatmapid)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
