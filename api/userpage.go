@@ -40,7 +40,6 @@ func (s *Server) Userpage(c *fiber.Ctx) error {
 			Username: apiu.Username,
 			UserId:   apiu.ID,
 		}
-
 	}
 
 	stats := types.Stats{

@@ -18,7 +18,7 @@ export let options = {
     },
 };
 
-const BASE_URL = 'https://osu.illegalesachen.download';
+const BASE_URL = 'https://progress.illegalesachen.download';
 
 const endpoints = [
     { url: `${BASE_URL}/api/scoresearch?query=apo&from=&to=09:33 20/05/2024&limit=10&offset=0`, weight: 50 },
