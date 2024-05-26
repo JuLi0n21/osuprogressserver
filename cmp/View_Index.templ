@@ -1,8 +1,6 @@
 package cmp
 
-import "osuprogressserver/types"
-
-templ View_Index(scores []types.Ext_ScoreData) {
+templ View_Index() {
     @Head()
     @FixedIcons()
     <body class={ "flex justify-center text-white " + theme(ctx).Dark }>
@@ -10,7 +8,10 @@ templ View_Index(scores []types.Ext_ScoreData) {
         <div class={ "h-max content rounded-lg " + theme(ctx).Medium_dark }>
             <h1 class="flex justify-center p-4 m-2 ">Osu Progress</h1>
             @Spacer()
-            @ScoreContainer(scores, 10, len(scores))
+            <div hx-get="/api/randomscores"
+            hx-trigger="load"
+            hx-swap="OUTERhtml"
+            ></div>
             @Spacer()
             @Footer()
         </div>

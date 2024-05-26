@@ -26,6 +26,8 @@ type Storage interface {
 
 	GetApiUser(int) (types.ApiUser, error)
 
+	GetApiKey(int) (string, error)
+
 	//User
 	SaveUser(types.User) error
 
@@ -42,6 +44,8 @@ type Storage interface {
 	SaveBanchoTime(types.BanchoTime) error
 
 	SaveScreenTime(types.ScreenTime) error
+
+	SetApiKey(int, string) error
 
 	MockScores(int) error
 }

@@ -687,6 +687,42 @@ func createTables(db *sql.DB) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS ApiKeys (
+		Userid  INTEGER NOT NULL PRIMARY KEY,
+		ApiKey TEXT NOT NULL
+	);`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (s *SQLite) GetApiKey(userid int) (string, error) {
+
+	row := s.DB.QueryRow(`SELECT APIKEY FROM APIKEYS WHERE USERID = ?`, userid)
+	if row.Err() != nil {
+		log.Fatal(row.Err().Error())
+		return "0", nil
+	}
+
+	return "0", nil
+
+}
+
+func (s *SQLite) SetApiKey(Userid int, apikey string) error {
+	stmt, err := s.DB.Prepare(`INSERT OR REPLACE INTO APIKEYS (USERID, APIKEY)
+	VALUES(?, ?);`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(Userid, apikey)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *SQLite) MockScores(length int) error {

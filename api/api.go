@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"osuprogressserver/cmp"
 	"osuprogressserver/types"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
@@ -18,6 +19,10 @@ type SearchQuery struct {
 	offset    int
 	userid    int
 	beatmapid int
+}
+
+type errorMessage struct {
+	message string `json:"message"`
 }
 
 func (s *Server) ScoreSearch(c *fiber.Ctx) error {
@@ -67,9 +72,13 @@ func (s *Server) ScoreSearch(c *fiber.Ctx) error {
 
 func (s *Server) Score(c *fiber.Ctx) error {
 
-	if t := c.GetReqHeaders()["Authorization"]; len(t) == 0 {
+	t := c.GetReqHeaders()["Authorization"]
+
+	if len(t) == 0 {
 		return c.SendStatus(401)
 	}
+
+	k := strings.TrimPrefix(t[0], "Bearer ")
 
 	var apiscore types.ApiScore
 
@@ -77,20 +86,25 @@ func (s *Server) Score(c *fiber.Ctx) error {
 		return err
 	}
 
+	key, err := s.store.GetApiKey(apiscore.Userid)
+	if err != nil || key == "0" || key != k {
+		c.SendStatus(401)
+		return c.JSON(`{"message":"access denied"}`)
+	}
+
 	score := types.Ext_ScoreData{
 		ScoreData: types.ScoreData{
-			Title:     apiscore.Title,
-			Date:      apiscore.Date,
-			Playtype:  apiscore.PlayType,
-			BeatmapID: apiscore.BeatmapID,
-			Ar:        apiscore.AR,
-			Cs:        apiscore.CS,
-			Hp:        apiscore.HP,
-			Od:        apiscore.OD,
-			SR:        apiscore.SR,
-			Bpm:       apiscore.BPM,
-			//Userid:      apiscore.Username,
-			Userid:      14100399,
+			Title:       apiscore.Title,
+			Date:        apiscore.Date,
+			Playtype:    apiscore.PlayType,
+			BeatmapID:   apiscore.BeatmapID,
+			Ar:          apiscore.AR,
+			Cs:          apiscore.CS,
+			Hp:          apiscore.HP,
+			Od:          apiscore.OD,
+			SR:          apiscore.SR,
+			Bpm:         apiscore.BPM,
+			Userid:      apiscore.Userid,
 			ACC:         apiscore.ACC,
 			Score:       apiscore.Score,
 			Combo:       apiscore.Combo,
@@ -135,6 +149,20 @@ func (s *Server) Score(c *fiber.Ctx) error {
 func (s *Server) PlayerIcon(c *fiber.Ctx) error {
 
 	component := cmp.PlayerIcon()
+
+	handler := adaptor.HTTPHandler(C(templ.Handler(component), c.UserContext()))
+
+	return handler(c)
+}
+
+func (s *Server) RandomScores(c *fiber.Ctx) error {
+
+	scores, err := s.store.GetRandomScores(100)
+	if err != nil {
+		c.Status(500)
+	}
+
+	component := cmp.ScoreContainer(scores, 0, len(scores))
 
 	handler := adaptor.HTTPHandler(C(templ.Handler(component), c.UserContext()))
 

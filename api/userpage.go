@@ -11,7 +11,6 @@ import (
 )
 
 func (s *Server) Userpage(c *fiber.Ctx) error {
-	//todo
 
 	id := c.Params("id")
 

@@ -10,12 +10,7 @@ import (
 
 func (s *Server) Index(c *fiber.Ctx) error {
 
-	scores, err := s.store.GetRandomScores(10)
-	if err != nil {
-		return nil
-	}
-
-	component := cmp.View_Index(scores)
+	component := cmp.View_Index()
 
 	handler := adaptor.HTTPHandler(C(templ.Handler(component), c.UserContext()))
 

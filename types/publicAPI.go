@@ -18,6 +18,7 @@ type ApiScore struct {
 	Artist       string
 	Creator      string
 	Username     string
+	Userid       int
 	ACC          float64
 	MaxCombo     int
 	Score        int

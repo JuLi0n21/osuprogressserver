@@ -2,6 +2,7 @@ package api
 
 import (
 	"osuprogressserver/storage"
+	"time"
 
 	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
@@ -52,7 +53,6 @@ func (s *Server) Start() error {
 
 	api := app.Group("/api")
 	api.Get("/scoresearch/*", s.ScoreSearch)
-	api.Get("/score", s.Score)
 	api.Post("/score", s.Score)
 	api.Get("/player", s.PlayerIcon)
 
@@ -63,10 +63,13 @@ func (s *Server) Start() error {
 	oauth.Get("/token", s.OauthAccess)
 
 	app.Get("/me", s.Userpage)
-	app.Use(cache.New())
+	app.Use(cache.New(cache.Config{
+		Expiration: 10 * time.Minute,
+	}))
 	app.Get("/", s.Index)
 	app.Get("/users/:id", s.Userpage)
 	app.Get("/score/:id", s.ScorePage)
+	api.Get("/randomscores", s.RandomScores)
 
 	return app.Listen(s.port)
 }
