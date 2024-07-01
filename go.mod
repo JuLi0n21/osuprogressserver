@@ -6,7 +6,7 @@ require (
 	github.com/a-h/templ v0.2.648
 	github.com/ansrivas/fiberprometheus/v2 v2.6.1
 	github.com/brianvoe/gofakeit/v7 v7.0.3
-	github.com/gofiber/fiber/v2 v2.52.4
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/joho/godotenv v1.5.1
 	github.com/mattn/go-sqlite3 v1.14.22
 )
